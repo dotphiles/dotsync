@@ -1,0 +1,12 @@
+############################################################################
+# File:         .rsyncignore
+# Author:       Ben O'Hara <bohara@gmail.com>
+# Description:  Ignore these files when rsyncing to remote machines
+############################################################################    
+
+.git/
+backups/
+ssh/id*
+ssh/known_hosts
+gnupg/secring.gpg
+vim/.*

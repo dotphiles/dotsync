@@ -1,0 +1,22 @@
+############################################################################
+# File:         gitignore-example
+# Author:       Ben O'Hara <bohara@gmail.com>
+# Description:  Ignore these files in this repo
+############################################################################    
+
+.*.swp
+.DS_Store
+backups/*
+ssh/id*
+ssh/known_hosts
+vim/.*
+subversion/README.txt
+subversion/auth/*
+gnupg/secring.gpg
+gnupg/random*
+gnupg/*~
+centerim/*/
+centerim/pid
+mutt/cache/*
+mutt/smime/cetificates/*
+mutt/smime/keys/*
