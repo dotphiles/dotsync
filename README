@@ -21,12 +21,12 @@ INSTALLATION:
 If you already have your dotfiles in a git repo...
 
     cd ~/.dotfiles
-    git submodule add git@github.com:benohara/dotsync.git
+    git submodule add git@github.com:dotphiles/dotsync.git
     git submodule --init update
 
 If you dont...
 
-    git clone --recursive git@github.com:benohara/dotsync-dotfiles.git ~/.dotfiles
+    git clone --recursive git@github.com:dotphiles/dotsync-dotfiles.git ~/.dotfiles
 
 Copy your dotfiles into ~/.dotfiles without the dot...
 
