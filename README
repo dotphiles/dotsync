@@ -8,15 +8,15 @@ repo or pushed via rsync
 Master servers can be assigned, for cases where groups of machines are 
 behind firewalls or only accessible from a certain location.
 
-REQUIREMENTS:
-=============
+Requirements
+============
 
 dotsync assumes that you have ssh setup correctly, with ssh-agent and configs
 for correct usernames etc, if you can 'ssh hostname' it probably wont work 
 and if your asked for passwords it will take hours with any number of machines.
 
-INSTALLATION:
-=============
+Installation
+============
 
 If you already have your dotfiles in a git repo...
 
@@ -48,12 +48,12 @@ Then, symlink your dotfiles into place...
     export PATH=~/.dotfiles/dotsync/bin:$PATH (add to you profile)
     dotsync -L
 
-See the CONFIGURATION section for configuration info.
+See the *Configuration* section for configuration info.
 
 Then add hosts into dotsyncrc and `dotsync -I -H hostname` (at your own risk!)
 
-USAGE:
-======
+Usage
+=====
 
     -I          - Initialise a machine using dotsync
     -L          - Symlink available dotfiles into $HOME
@@ -70,8 +70,8 @@ USAGE:
     -v          - Verbose
     -h          - Show help message
 
-CONFIGURATION:
-==============
+Configuration
+=============
 
 `~/.dotsyncrc`
 
@@ -97,8 +97,8 @@ and 'secret' files here.
 
 See rsyncignore-example
 
-ISSUES:
-=======
+Issues
+======
 
 Probably lots!
 
@@ -107,10 +107,10 @@ it wipes your ssh keys but should be safe.
 
 Existing files will be backed up in ~/.dotfiles/backups or ~/.dotfiles.backup
 
-LICENCE:
-========
+License
+=======
 
-Copyright (c) 2011 Ben O'Hara
+Copyright (c) dotphiles
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
