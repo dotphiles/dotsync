@@ -1,11 +1,10 @@
 #!/usr/bin/env bash
-############################################################################
-# File:         dotsync
-# Author:       Ben O'Hara <bohara@gmail.com>
-# Description:  Sync dotfiles from a git repo and out to other machines
-##############################################################################
+#
+# dotsync : https://github.com/dotphiles/dotsync
+#
+# Sync dotfiles from a git repo and out to other machines
+#
 
-VERSION="0.1.1"
 PROG=`basename $0`
 DOTFILES=".dotfiles"
 CONFIG="$HOME/.dotsyncrc"
@@ -257,7 +256,6 @@ fi
 usage()
 {
     cat << EOF
-dotsync v$VERSION
 usage: $PROG -I|L|u|U|P|A [-H host|ALL] [-r] [-d dotfiles] [-f conf] [-v]
 
 WARNING: This could stop you being able to login to remote hosts!
@@ -283,7 +281,7 @@ EOF
 }
 
 function listhosts(){
-echo "dotsync $VERSION configuration:"
+echo "dotsync configuration:"
 echo
 gitrepo
 if [[ ! -z "$ORIGIN" ]]; then
