@@ -1,8 +1,8 @@
-############################################################################
-# File:         .rsyncignore
-# Author:       Ben O'Hara <bohara@gmail.com>
-# Description:  Ignore these files when rsyncing to remote machines
-############################################################################    
+#
+# dotsync : https://github.com/dotphiles/dotsync
+#
+# Ignore these files when rsyncing to remote machines
+#
 
 .git/
 backups/

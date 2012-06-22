@@ -1,8 +1,8 @@
-############################################################################
-# File:         .dotsyncrc
-# Author:       Ben O'Hara <bohara@gmail.com>
-# Description:  Config for dotsync
-############################################################################    
+#
+# dotsync : https://github.com/dotphiles/dotsync
+#
+# Config for dotsync
+#
 
 # Location of your dotfiles
 # DOTFILES=.dotfiles
