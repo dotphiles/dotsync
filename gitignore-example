@@ -1,8 +1,8 @@
-############################################################################
-# File:         gitignore-example
-# Author:       Ben O'Hara <bohara@gmail.com>
-# Description:  Ignore these files in this repo
-############################################################################    
+#
+# dotsync : http://github.com/dotphiles/dotsync
+#
+# Ignore these files in this repo
+#
 
 .*.swp
 .DS_Store
