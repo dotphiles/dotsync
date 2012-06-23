@@ -26,27 +26,22 @@ If you already have your dotfiles in a git repo...
 
 If you dont...
 
-    git clone --recursive git@github.com:dotphiles/dotsync-dotfiles.git ~/.dotfiles
+Fork the main project on [github](https://github.com/dotphiles/dotfiles)
+
+    git clone --recursive git@github.com:*username*/dotfiles.git ~/.dotfiles
 
 Copy your dotfiles into ~/.dotfiles without the dot...
 
-Create a repo on github, or elsewhere as your central 'origin'...
-
-    git remote set-url origin git@github.com:username/dotfiles.git
-
 List your dotfiles in dotsyncrc without the dot...
-
-    cp ~/.dotfiles/dotsync/dotsyncrc-example ~/.dotfiles/dotsyncrc
 
 Checkin your changes...
 
-    git commit -a -m "Initilising dotsync"
-    git push origin master
+    git commit -a -m "Initial Commit"
+    git push
 
 Then, symlink your dotfiles into place...
 
-    export PATH=~/.dotfiles/dotsync/bin:$PATH (add to you profile)
-    dotsync -L
+    ~/.dotfiles/dotsync/bin/dotsync -L
 
 See the *Configuration* section for configuration info.
 
@@ -110,7 +105,7 @@ Existing files will be backed up in ~/.dotfiles/backups or ~/.dotfiles.backup
 License
 =======
 
-Copyright (c) 2002-2012 "dotphiles"
+Copyright (c) 2010-2012 Ben O'Hara <bohara@gmail.com>
 
 This file is part of dotsync.
 
