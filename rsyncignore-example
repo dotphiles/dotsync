@@ -5,8 +5,9 @@
 #
 
 .git/
-backups/
+backup/
 ssh/id*
 ssh/known_hosts
 gnupg/secring.gpg
 vim/.*
+vim/backup/*
