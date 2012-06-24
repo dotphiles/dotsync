@@ -6,10 +6,11 @@
 
 .*.swp
 .DS_Store
-backups/*
+backup/*
 ssh/id*
 ssh/known_hosts
 vim/.*
+vim/backup/*
 subversion/README.txt
 subversion/auth/*
 gnupg/secring.gpg
