@@ -29,7 +29,7 @@
 PROG=`basename $0`
 DOTFILES=".dotfiles"
 CONFIG="$HOME/.dotsyncrc"
-BACKUPDIR="$HOME/$DOTFILES/backups"
+BACKUPDIR="$HOME/$DOTFILES/backup"
 DATE=`date +"%Y%m%d%H%M"`
 GITOPT="-q"
 GITSUBOPT="--quiet"
