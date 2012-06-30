@@ -213,7 +213,7 @@ cd $HOME/$DOTFILES
 for host in $hosts; do
     if [[ "$2" == "init" || "$2" == "push" ]]; then
         echo "*** Syncing $host with $DOTFILES using rsync ***"
-        rsync -azRp $RSYNCOPT --delete --exclude-from=.rsyncignore . $host:$DOTFILES/
+        rsync -azRp $RSYNCOPT --delete --delete-excluded --exclude-from=.rsyncignore . $host:$DOTFILES/
         ssh $host "$REMOTEDSPATH/dotsync -L $DOTSYNCOPT && \
             if [[ -d $DOTFILES/.git ]]; then rm -rf $DOTFILES/.git/; fi && \
                 echo "$host from $HOSTNAME" > $DOTFILES/.rsync"
