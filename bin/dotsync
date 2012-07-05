@@ -258,7 +258,7 @@ function removebrokenlinks(){
 if [[ "$VERBOSE" == True ]]; then
   echo "*** Removing broken symlinks from $HOME ***"
 fi
-find . -name .* -type l | while read f; do if [ ! -e "$f"  ]; then rm -f "$f"; fi; done
+find $HOME -name ".*" -type l | while read f; do if [ ! -e "$f"  ]; then rm -f "$f"; fi; done
 }
 
 function isgitlayout(){
