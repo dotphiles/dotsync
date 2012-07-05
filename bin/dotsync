@@ -255,16 +255,10 @@ cd
 }
 
 function removebrokenlinks(){
-# TODO: fix if no file
-if [[ -x /usr/bin/file ]]; then
-    if [[ "$VERBOSE" == True ]]; then
-        echo "*** Removing broken symlinks from $HOME ***"
-    fi
-    for i in $(file $HOME/.* | grep broken | cut -d : -f 1)
-    do 
-        rm $i
-    done
+if [[ "$VERBOSE" == True ]]; then
+  echo "*** Removing broken symlinks from $HOME ***"
 fi
+find . -name .* -type l | while read f; do if [ ! -e "$f"  ]; then rm -f "$f"; fi; done
 }
 
 function isgitlayout(){
