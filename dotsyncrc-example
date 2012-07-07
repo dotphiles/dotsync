@@ -7,12 +7,14 @@
 # Location of your dotfiles
 # DOTFILES=.dotfiles
 
-# dotfiles to symlink
+# dotfiles to symlink as srcfile:dstfile or dstfile will
+# be '.$srcfile'
 [files]
 dotsyncrc
 #bash_logout
 #bash_profile
 #bashrc
+bin:bin
 #dir_colors
 #gitconfig
 #gitignore

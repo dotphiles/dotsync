@@ -104,8 +104,14 @@ function symlinkdotfiles(){
 getfiles
 echo "*** Symlinking dotfiles from $HOME/$DOTFILES to $HOME on $HOSTNAME ***"
 for file in $SRCFILES ; do
-  REALFILE="$HOME/$DOTFILES/$file"
-  DOTFILE="$HOME/.$file"
+
+  SRCFILE=`echo $file | awk -F: '{print $1}'`
+  DSTFILE=`echo $file | awk -F: '{print $2}'`
+  if [[ $DSTFILE = "" ]]; then
+    DSTFILE=".$SRCFILE"
+  fi
+  REALFILE="$HOME/$DOTFILES/$SRCFILE"
+  DOTFILE="$HOME/$DSTFILE"
   if [[ -e "$DOTFILE" ]] && [[ ! -h "$DOTFILE" ]]; then
     BACKUP="$BACKUPDIR/$file"
     echo "*** $DOTFILE already exists, backing up in $BACKUP ***"
