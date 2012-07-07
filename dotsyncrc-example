@@ -5,7 +5,7 @@
 #
 
 # Location of your dotfiles
-# DOTFILES=.dotfiles
+# DOTFILES=.dotphiles
 
 # dotfiles to symlink as srcfile:dstfile or dstfile will
 # be '.$srcfile'
