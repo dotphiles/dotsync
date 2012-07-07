@@ -50,10 +50,10 @@ function getconfig(){
 if [[ ! -z "$DOTSYNCRC" ]]; then
   CONFIG=$DOTSYNCRC
 fi
-if [[ ! -e $CONFIG ]]; then
-  if [[ -e $HOME/$DOTFILES/dotsyncrc ]]; then
+if [[ ! -s $CONFIG ]]; then
+  if [[ -s $HOME/$DOTFILES/dotsyncrc ]]; then
     CONFIG="$HOME/$DOTFILES/dotsyncrc"
-  elif [[ -e $HOME/$DOTFILES/.dotsyncrc ]]; then
+  elif [[ -s $HOME/$DOTFILES/.dotsyncrc ]]; then
     CONFIG="$HOME/$DOTFILES/.dotsyncrc"
   else 
     echo "*** $CONFIG doesnt exist, exiting ***"
