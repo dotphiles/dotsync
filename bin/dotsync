@@ -101,12 +101,11 @@ cd
 }
 
 function updatevimbundles(){
-if [[ -d $HOME/.vim/bundle/vundle ]]; then
-  cd $HOME/.vim/bundle/vundle && make update
+if [[ -s $HOME/.vim/Makefile ]]; then
+  cd $HOME/.vim && make update
   if [[ "$VERBOSE" == True ]]; then
     echo "*** Updated $HOME/.vim/bundles ***"
   fi
-d
 fi
 }
 
