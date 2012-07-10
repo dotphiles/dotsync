@@ -4,8 +4,8 @@
 # Config for dotsync
 #
 
-# Location of your dotfiles
-# DOTFILES=.dotphiles
+# Location of your dotfiles in $HOME
+DOTFILES=.dotphiles
 
 # dotfiles to symlink
 #

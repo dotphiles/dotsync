@@ -1,10 +1,13 @@
 #
 # dotsync : https://github.com/dotphiles/dotsync
 #
-# Changelog
+# ChangeLog
 #
 
-* 2012-06-22 - Ben O'Hara <bohara@gmail.com>
-  - Moved repo to dotphiles.
-* 2011 - Ben O'Hara <bohara@gmail.com>
-  - dotsync - Initial Release.
+2012-06-22 - Ben O'Hara <bohara@gmail.com>
+
+	* Moved repo to dotphiles.
+
+2011 - Ben O'Hara <bohara@gmail.com>
+
+	* dotsync - Initial Release.

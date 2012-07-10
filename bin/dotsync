@@ -27,7 +27,9 @@
 #
 
 PROG=`basename $0`
-DOTFILES=".dotphiles"
+if [[ -z "$DOTFILES" ]]; then
+  DOTFILES=".dotphiles"
+fi
 CONFIG="$HOME/.dotsyncrc"
 BACKUPDIR="$HOME/$DOTFILES/backup"
 DATE=`date +"%Y%m%d%H%M"`
