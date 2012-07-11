@@ -28,7 +28,7 @@
 
 PROG=`basename $0`
 if [[ -z "$DOTFILES" ]]; then
-  DOTFILES=".dotphiles"
+  DOTFILES=".dotfiles"
 fi
 CONFIG="$HOME/.dotsyncrc"
 BACKUPDIR="$HOME/$DOTFILES/backup"
