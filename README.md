@@ -26,9 +26,9 @@ If you already have your dotfiles in a git repo...
 
 If you dont...
 
-Fork the main project on [github](https://github.com/dotphiles/dotphiles)
+Fork the main project on [github](https://github.com/dotphiles/dotfiles)
 
-    git clone --recursive git@github.com:*username*/dophiles.git ~/.dotphiles
+    git clone --recursive git@github.com:*username*/dotfiles.git ~/.dotfiles
 
 Copy your dotfiles into ~/.dotfiles without the dot...
 
@@ -41,7 +41,7 @@ Checkin your changes...
 
 Then, symlink your dotfiles into place...
 
-    ~/.dotphiles/dotsync/bin/dotsync -L
+    ~/.dotfiles/dotsync/bin/dotsync -L
 
 See the *Configuration* section for configuration info.
 
@@ -60,7 +60,7 @@ Usage
     -A          - Updates dotfiles and submodules on all known machines
     -r          - Use rsync instead of git
     -f conf     - Config file, defaults to '~/.dotsyncrc' or '$DOTSYNCRC'
-    -d dotfiles - Location of dotfiles, defaults to '~/.dotphiles'
+    -d dotfiles - Location of dotfiles, defaults to '~/.dotfiles'
     -l          - List configured hosts and dotfiles to symlink
     -v          - Verbose
     -h          - Show help message
@@ -78,14 +78,14 @@ already symlinked.
 
 See dotsyncrc-example
 
-`~/.dotphiles/.gitignore`
+`~/.dotfiles/.gitignore`
 
 Controls which files are ignored from being added to the git repo, add any
 temporary and 'secret' files here.
 
 See gitignore-example
 
-`~/dotphiles/.rsyncignore`
+`~/dotfiles/.rsyncignore`
 
 Controls which files are ignored when rsyncing a remote host, add any temporary
 and 'secret' files here.
@@ -100,7 +100,7 @@ Probably lots!
 If you not sure, keep an ssh session open to any remote machines, in case
 it wipes your ssh keys but should be safe.
 
-Existing files will be backed up in ~/.dotphiles/backups or ~/.dotphiles.backup
+Existing files will be backed up in ~/.dotfiles/backups or ~/.dotfiles.backup
 
 License
 =======
