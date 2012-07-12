@@ -250,7 +250,7 @@ if [[ "$1" == "all" ]]; then
   initlocal 
   cd $HOME/$DOTFILES
   echo "*** Pulling latest changes for submodules ***"
-  git submodule update --init
+  git submodule $GITSUBOPT update --init
   git submodule $GITSUBOPT foreach --recursive git pull $GITOPT origin master
   updatevimbundles
 fi
