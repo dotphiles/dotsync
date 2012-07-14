@@ -26,9 +26,9 @@ If you already have your dotfiles in a git repo...
 
 If you dont...
 
-Fork the main project on [github](https://github.com/dotphiles/dotfiles)
+Fork the main project on [github](https://github.com/dotphiles/dotphiles)
 
-    git clone --recursive git@github.com:*username*/dotfiles.git ~/.dotfiles
+    git clone --recursive git@github.com:*username*/dotphiles.git ~/.dotfiles
 
 Copy your dotfiles into ~/.dotfiles without the dot...
 
