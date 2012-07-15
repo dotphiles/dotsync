@@ -100,7 +100,7 @@ Probably lots!
 If you not sure, keep an ssh session open to any remote machines, in case
 it wipes your ssh keys but should be safe.
 
-Existing files will be backed up in ~/.dotfiles/backups or ~/.dotfiles.backup
+Existing files will be backed up in ~/.backup/dotfiles or ~/.backup/dotfiles.old
 
 License
 =======
