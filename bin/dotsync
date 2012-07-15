@@ -31,7 +31,7 @@ if [[ -z "$DOTFILES" ]]; then
   DOTFILES=".dotfiles"
 fi
 CONFIG="$HOME/.dotsyncrc"
-BACKUPDIR="$HOME/$DOTFILES/backup"
+BACKUPDIR="$HOME/.backup/$DOTFILES"
 DATE=`date +"%Y%m%d%H%M"`
 GITOPT="-q"
 GITSUBOPT="--quiet"
@@ -132,8 +132,8 @@ for file in $SRCFILES ; do
     if [[ "$DOTFILE" == "$HOME/.ssh" ]]; then
       if [[ -f $BACKUP/ssh/known_hosts ]]; then
         cp $BACKUP/ssh/known_hosts $DOTFILE/
-      elif [[ -f $DOTFILES.backup/ssh/known_hosts ]]; then
-        cp $DOTFILES.backup/ssh/known_hosts $DOTFILE/
+      elif [[ -f $BACKUPDIR.backup/ssh/known_hosts ]]; then
+        cp $BACKUPDIR.backup/ssh/known_hosts $DOTFILE/
       fi
     fi
   elif [[ -e "$DOTFILE" ]]; then
@@ -179,7 +179,7 @@ for host in $hosts; do
     echo
     elif [[ "$2" == "init" ]]; then
       echo "*** Initialising $host with $DOTFILES from $ORIGIN ***"
-      ssh -t $host "if [[ -e $DOTFILES ]]; then mv $DOTFILES $DOTFILES.backup; fi; if [ -L .ssh ]; then rm .ssh; fi; \
+      ssh -t $host "if [[ -e $DOTFILES ]]; then mv $DOTFILES $BACKUPDIR.backup; fi; if [ -L .ssh ]; then rm .ssh; fi; \
         git clone --recursive $ORIGIN \$HOME/$DOTFILES && $REMOTEDSPATH/dotsync -d $DOTFILES -I $DOTSYNCOPT && $REMOTEDSPATH/dotsync -d $DOTFILES -L $DOTSYNCOPT"
   fi
 done
