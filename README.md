@@ -9,14 +9,14 @@ Master servers can be assigned, for cases where groups of machines are
 behind firewalls or only accessible from a certain location.
 
 Requirements
-============
+------------
 
 dotsync assumes that you have ssh setup correctly, with ssh-agent and configs
 for correct usernames etc, if you can 'ssh hostname' it probably wont work 
 and if your asked for passwords it will take hours with any number of machines.
 
 Installation
-============
+------------
 
 If you already have your dotfiles in a git repo...
 
@@ -48,7 +48,7 @@ See the *Configuration* section for configuration info.
 Then add hosts into dotsyncrc and `dotsync -I -H hostname` (at your own risk!)
 
 Usage
-=====
+-----
 
     -I          - Initialise a machine using dotsync
     -L          - Symlink available dotfiles into $HOME
@@ -66,7 +66,7 @@ Usage
     -h          - Show help message
 
 Configuration
-=============
+-------------
 
 `~/.dotsyncrc`
 
@@ -93,7 +93,7 @@ and 'secret' files here.
 See rsyncignore-example
 
 Issues
-======
+------
 
 Probably lots!
 
@@ -103,7 +103,7 @@ it wipes your ssh keys but should be safe.
 Existing files will be backed up in ~/.backup/dotfiles or ~/.backup/dotfiles.old
 
 License
-=======
+-------
 
 Copyright (c) 2012 Ben O'Hara <bohara@gmail.com>
 
