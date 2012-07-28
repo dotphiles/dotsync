@@ -5,7 +5,7 @@
 #
 
 # Location of your dotfiles in $HOME
-DOTFILES=.dotphiles
+# DOTFILES=.dotfiles
 
 # dotfiles to symlink
 #
