@@ -256,7 +256,6 @@ if [[ "$1" == "all" ]]; then
   echo "*** Pulling latest changes for submodules ***"
   git submodule $GITSUBOPT update --init
   git submodule $GITSUBOPT foreach --recursive git pull $GITOPT origin master
-  updatevimbundles
 fi
 cd
 }
