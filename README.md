@@ -76,31 +76,54 @@ dotfiles to symlink into your homedir.
 This file can be included in the repo, and dotsync will use it if its not 
 already symlinked.
 
-See dotsyncrc-example
+See *templates/dotsyncrc*
 
 `~/.dotfiles/.gitignore`
 
 Controls which files are ignored from being added to the git repo, add any
 temporary and 'secret' files here.
 
-See gitignore-example
+See *templates/gitignore*
 
 `~/dotfiles/.rsyncignore`
 
 Controls which files are ignored when rsyncing a remote host, add any temporary
 and 'secret' files here.
 
-See rsyncignore-example
+See *templates/rsyncignore*
 
 Issues
 ------
-
-Probably lots!
 
 If you not sure, keep an ssh session open to any remote machines, in case
 it wipes your ssh keys but should be safe.
 
 Existing files will be backed up in ~/.backup/dotfiles or ~/.backup/dotfiles.old
+
+Contribute
+----------
+
+This project would not exist without all of its users and [contributors][1].
+
+If you have ideas on how to make the configuration easier to maintain or
+improve its performance, do not hesitate to fork and send pull requests.
+
+### Issue Reporting
+
+   - Check that the [issue][2] has not already been reported.
+   - Check that the [issue][2] has not already been fixed in the latest code.
+   - Open an [issue][2] with a clear title and description in grammatically correct,
+     complete sentences.
+
+### Pull Request
+
+   - Read [how to properly contribute to open source projects on GitHub][3].
+   - Use a topic branch to easily amend a pull request later, if necessary.
+   - Write [good commit messages][4].
+   - Squash commits on the topic branch before opening a pull request.
+   - Use the same coding style and spacing.
+   - Open a [pull request][5] that relates to but one subject with a clear
+     title and description in gramatically correct, complete sentences.
 
 License
 -------
@@ -125,3 +148,10 @@ NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
 LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+[1]: https://github.com/dotphiles/dotphiles/contributors
+[2]: https://github.com/dotphiles/dotphiles/issues
+[3]: http://gun.io/blog/how-to-github-fork-branch-and-pull-request
+[4]: http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html
+[5]: https://help.github.com/articles/using-pull-requests
+
