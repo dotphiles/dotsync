@@ -68,7 +68,7 @@ Usage
 Configuration
 -------------
 
-`~/.dotsyncrc`
+### ~/.dotsyncrc
 
 This config determines which hosts to sync, how, where from and which 
 dotfiles to symlink into your homedir. 
@@ -76,29 +76,30 @@ dotfiles to symlink into your homedir.
 This file can be included in the repo, and dotsync will use it if its not 
 already symlinked.
 
-See *templates/dotsyncrc*
+See [templates/dotsyncrc][6]
 
-`~/.dotfiles/.gitignore`
+### ~/.dotfiles/.gitignore
 
 Controls which files are ignored from being added to the git repo, add any
 temporary and 'secret' files here.
 
-See *templates/gitignore*
+See [templates/gitignore][7]
 
-`~/dotfiles/.rsyncignore`
+### ~/dotfiles/.rsyncignore
 
 Controls which files are ignored when rsyncing a remote host, add any temporary
 and 'secret' files here.
 
-See *templates/rsyncignore*
+See [templates/rsyncignore][8]
 
 Issues
 ------
 
-If you not sure, keep an ssh session open to any remote machines, in case
+If you are not sure, keep an ssh session open to any remote machines, in case
 it wipes your ssh keys but should be safe.
 
-Existing files will be backed up in ~/.backup/dotfiles or ~/.backup/dotfiles.old
+Existing dotfiles will be backed up in `~/.backup/dotfiles/`
+Existing dotfile repos will be backed up as `~/.backup/dotfiles.old/`
 
 Contribute
 ----------
@@ -149,9 +150,11 @@ LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-[1]: https://github.com/dotphiles/dotphiles/contributors
-[2]: https://github.com/dotphiles/dotphiles/issues
+[1]: https://github.com/dotphiles/dotsync/contributors
+[2]: https://github.com/dotphiles/dotsync/issues
 [3]: http://gun.io/blog/how-to-github-fork-branch-and-pull-request
 [4]: http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html
 [5]: https://help.github.com/articles/using-pull-requests
-
+[6]: https://github.com/dotphiles/dotsync/blob/master/templates/dotsyncrc
+[7]: https://github.com/dotphiles/dotsync/blob/master/templates/gitignore
+[8]: https://github.com/dotphiles/dotsync/blob/master/templates/rsyncignore
