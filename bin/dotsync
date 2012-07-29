@@ -43,253 +43,271 @@ UPDATEOPT=""
 ALLOPT=""
 REMOTEDSPATH="$DOTFILES/dotsync/bin"
 
-function checknotroot(){
-if [[ $USER == "root" ]]; then
-  echo "Not runing as root"
-  exit 1
-fi
-}
-
-function getconfig(){
-if [[ ! -z "$DOTSYNCRC" ]]; then
-  CONFIG=$DOTSYNCRC
-fi
-if [[ ! -s $CONFIG ]]; then
-  if [[ -s $HOME/$DOTFILES/dotsyncrc ]]; then
-    CONFIG="$HOME/$DOTFILES/dotsyncrc"
-  elif [[ -s $HOME/$DOTFILES/.dotsyncrc ]]; then
-    CONFIG="$HOME/$DOTFILES/.dotsyncrc"
-  else 
-    echo "*** $CONFIG doesnt exist, exiting ***"
+function checknotroot()
+{
+  if [[ $USER == "root" ]]; then
+    echo "Not runing as root"
     exit 1
   fi
-fi
-CONFIGDOTFILES=`grep '^DOTFILES=' $CONFIG | awk -F"=" '{print $2}'`
-if [[ ! -z "$CONFIGDOTFILES" ]]; then
-  DOTFILES=$CONFIGDOTFILES
-fi
 }
 
-function checkdirs(){
-if [[ ! -d $HOME/$DOTFILES && "$ACTION" != "init" ]]; then
-  echo "*** $HOME/$DOTFILES doesnt exist, run dotsync -I ***"
-  exit 1
-fi
-if [[ ! -e $BACKUPDIR ]]; then
-  mkdir -p $BACKUPDIR
-fi
-}
-
-function getfiles(){
-SRCFILES=`sed -n '/\[files\]/,/\[endfiles\]/p' $CONFIG | grep -v '^\[.*files]'|grep -v ^#`
-if [[ -z "$SRCFILES" ]]; then
-  echo "*** No dotfiles found in $CONFIG, add some ***"
-  exit 1
-fi
-}
-
-function getrealdotfile(){
-SRCFILE=`echo $file | awk -F: '{print $1}'`
-DSTFILE=`echo $file | awk -F: '{print $2}'`
-
-if [[ $DSTFILE = "" ]]; then
-  DSTFILE=".$SRCFILE"
-fi
-
-if [[ -e "$HOME/$DOTFILES/$SRCFILE.local" ]]; then
-  REALFILE="$HOME/$DOTFILES/$SRCFILE.local"
-elif [[ -e "$HOME/$DOTFILES/$SRCFILE.$HOSTNAME" ]]; then
-  REALFILE="$HOME/$DOTFILES/$SRCFILE.$HOSTNAME"
-else
-  REALFILE="$HOME/$DOTFILES/$SRCFILE"
-fi
-
-DOTFILE="$HOME/$DSTFILE"
-}
-
-function initlocal(){
-cd $HOME/$DOTFILES
-isgitlayout
-# init the main repo
-git submodule $GITSUBOPT update --init --recursive
-cd
-}
-
-function getgitorigin(){
-cd $HOME/$DOTFILES
-if [[ -d .git ]]; then
-  ORIGIN=`git config -l|grep remote.origin.url | awk -F'=' '{print $2}'`
-fi
-cd
-}
-
-function symlink(){
-getfiles
-echo "*** Symlinking dotfiles from $HOME/$DOTFILES to $HOME on $HOSTNAME ***"
-for file in $SRCFILES ; do
-  getrealdotfile $file
-
-  if [[ -e "$DOTFILE" ]] && [[ ! -h "$DOTFILE" ]]; then
-    BACKUP="$BACKUPDIR/$file"
-    echo "*** $DOTFILE already exists, backing up in $BACKUP ***"
-    cp -r $DOTFILE $BACKUP
-    rm -rf $DOTFILE
-    ln -s $REALFILE $DOTFILE
-    if [[ "$DOTFILE" == "$HOME/.ssh" ]]; then
-      if [[ -f $BACKUP/ssh/known_hosts ]]; then
-        cp $BACKUP/ssh/known_hosts $DOTFILE/
-      elif [[ -f $BACKUPDIR.old/ssh/known_hosts ]]; then
-        cp $BACKUPDIR.old/ssh/known_hosts $DOTFILE/
-      fi
+function getconfig()
+{
+  if [[ ! -z "$DOTSYNCRC" ]]; then
+    CONFIG=$DOTSYNCRC
+  fi
+  if [[ ! -s $CONFIG ]]; then
+    if [[ -s $HOME/$DOTFILES/dotsyncrc ]]; then
+      CONFIG="$HOME/$DOTFILES/dotsyncrc"
+    elif [[ -s $HOME/$DOTFILES/.dotsyncrc ]]; then
+      CONFIG="$HOME/$DOTFILES/.dotsyncrc"
+    else 
+      echo "*** $CONFIG doesnt exist, exiting ***"
+      exit 1
     fi
-  elif [[ -e "$DOTFILE" ]]; then
-    rm -f $DOTFILE
-    ln -s $REALFILE $DOTFILE
-  else
-    ln -s $REALFILE $DOTFILE
+  fi
+  CONFIGDOTFILES=`grep '^DOTFILES=' $CONFIG | awk -F"=" '{print $2}'`
+  if [[ ! -z "$CONFIGDOTFILES" ]]; then
+    DOTFILES=$CONFIGDOTFILES
+  fi
+}
+
+function checkdirs()
+{
+  if [[ ! -d $HOME/$DOTFILES && "$ACTION" != "init" ]]; then
+    echo "*** $HOME/$DOTFILES doesnt exist, run dotsync -I ***"
+    exit 1
+  fi
+  if [[ ! -e $BACKUPDIR ]]; then
+    mkdir -p $BACKUPDIR
+  fi
+}
+
+function getfiles()
+{
+  SRCFILES=`sed -n '/\[files\]/,/\[endfiles\]/p' $CONFIG | grep -v '^\[.*files]'|grep -v ^#`
+  if [[ -z "$SRCFILES" ]]; then
+    echo "*** No dotfiles found in $CONFIG, add some ***"
+    exit 1
+  fi
+}
+
+function getrealdotfile()
+{
+  SRCFILE=`echo $file | awk -F: '{print $1}'`
+  DSTFILE=`echo $file | awk -F: '{print $2}'`
+
+  if [[ $DSTFILE = "" ]]; then
+    
+    DSTFILE=".`basename $SRCFILE`"
   fi
 
-  if [[ -e /selinux/enforce ]]; then
-    if [[ "$DOTFILE" == "$HOME/.ssh" && -x /sbin/restorecon ]]; then
-      if [[ "$VERBOSE" == True ]]; then
-        echo "*** Restoring SELinux context on $REALFILE ***"
+  if [[ -e "$HOME/$DOTFILES/$SRCFILE.local" ]]; then
+    REALFILE="$HOME/$DOTFILES/$SRCFILE.local"
+  elif [[ -e "$HOME/$DOTFILES/$SRCFILE.$HOSTNAME" ]]; then
+    REALFILE="$HOME/$DOTFILES/$SRCFILE.$HOSTNAME"
+  else
+    REALFILE="$HOME/$DOTFILES/$SRCFILE"
+  fi
+
+  DOTFILE="$HOME/$DSTFILE"
+}
+
+function initlocal()
+{
+  cd $HOME/$DOTFILES
+  isgitlayout
+  # init the main repo
+  git submodule $GITSUBOPT update --init --recursive
+  cd
+}
+
+function getgitorigin()
+{
+  cd $HOME/$DOTFILES
+  if [[ -d .git ]]; then
+    ORIGIN=`git config -l|grep remote.origin.url | awk -F'=' '{print $2}'`
+  fi
+  cd
+}
+
+function symlink()
+{
+  getfiles
+  echo "*** Symlinking dotfiles from $HOME/$DOTFILES to $HOME on $HOSTNAME ***"
+  for file in $SRCFILES ; do
+    getrealdotfile $file
+
+    if [[ -e "$DOTFILE" ]] && [[ ! -h "$DOTFILE" ]]; then
+      BACKUP="$BACKUPDIR/$file"
+      echo "*** $DOTFILE already exists, backing up in $BACKUP ***"
+      cp -r $DOTFILE $BACKUP
+      rm -rf $DOTFILE
+      ln -s $REALFILE $DOTFILE
+      if [[ "$DOTFILE" == "$HOME/.ssh" ]]; then
+        if [[ -f $BACKUP/ssh/known_hosts ]]; then
+          cp $BACKUP/ssh/known_hosts $DOTFILE/
+        elif [[ -f $BACKUPDIR.old/ssh/known_hosts ]]; then
+          cp $BACKUPDIR.old/ssh/known_hosts $DOTFILE/
+        fi
       fi
-      /sbin/restorecon -R $REALFILE
+    elif [[ -e "$DOTFILE" ]]; then
+      rm -f $DOTFILE
+      ln -s $REALFILE $DOTFILE
+    else
+      ln -s $REALFILE $DOTFILE
     fi
+
+    if [[ -e /selinux/enforce ]]; then
+      if [[ "$DOTFILE" == "$HOME/.ssh" && -x /sbin/restorecon ]]; then
+        if [[ "$VERBOSE" == True ]]; then
+          echo "*** Restoring SELinux context on $REALFILE ***"
+        fi
+        /sbin/restorecon -R $REALFILE
+      fi
+    fi
+    if [[ "$VERBOSE" == True ]]; then
+      echo "*** Symlinked $DOTFILE to $HOME/$REALFILE ***"
+    fi
+  done
+  removebrokenlinks
+}
+
+
+function gitremote()
+{
+  getgitorigin
+  if [[ "$1" == "all" ]]; then
+    gethosts git
+    hosts=$HOSTS
+  else
+    validhost git $1
+    hosts=$1
+  fi
+  for host in $hosts; do
+    if [[ "$2" == "pull" ]]; then
+      echo "*** Running a git pull of $DOTFILES on $host ***"
+      if [[ "$3" == "all" ]]; then
+        ssh $host "$REMOTEDSPATH/dotsync -U $DOTSYNCOPT && $REMOTEDSPATH/dotsync -L $DOTSYNCOPT"
+      else
+        ssh $host "$REMOTEDSPATH/dotsync -u $DOTSYNCOPT && $REMOTEDSPATH/dotsync -L $DOTSYNCOPT"
+      fi
+      echo
+    elif [[ "$2" == "init" ]]; then
+      echo "*** Initialising $host with $DOTFILES from $ORIGIN ***"
+      ssh -t $host "if [[ -e $DOTFILES ]]; then mv $DOTFILES $BACKUPDIR.old; fi; if [ -L .ssh ]; then rm .ssh; fi; \
+        git clone --recursive $ORIGIN \$HOME/$DOTFILES && $REMOTEDSPATH/dotsync -d $DOTFILES -I $DOTSYNCOPT && $REMOTEDSPATH/dotsync -d $DOTFILES -L $DOTSYNCOPT"
+    fi
+  done
+}
+
+function validhost()
+{
+  chktype=$1
+  chkhost=$2
+  if [[ "$VERBOSE" == True ]]; then
+    echo "*** Checking if $chkhost is valid for $chktype from $HOSTNAME ***"
+  fi
+  VALID=`sed -n '/\[hosts\]/,/\[endhosts\]/p' $CONFIG |grep -v '^\[.*hosts'| \
+    egrep "($chktype=ANY|$chktype=$HOSTNAME)" | grep -v '^#' | awk '{print $1}'| grep ^$chkhost`
+  if [[ "$VALID" == "" ]]; then
+    echo "*** Cant find $chkhost in $CONFIG for $chktype from $HOSTNAME ***"
+    exit 1
+  fi
+}
+
+
+function gethosts()
+{
+  type=$1
+  if [[ "$type" == "masters" ]];then
+    HOSTS=`sed -n '/\[hosts\]/,/\[endhosts\]/p' $CONFIG | grep -v '^\[.*hosts'| grep -v '^#' |  \
+      awk -F"=" '{print $NF}'|uniq | awk '{print $1}'|egrep -v '(ANY|NONE)' |grep -v $HOSTNAME`
+
+  else
+    HOSTS=`sed -n '/\[hosts\]/,/\[endhosts\]/p' $CONFIG |grep -v '^\[.*hosts'| \
+      egrep "($type=ANY|$type=$HOSTNAME)" | grep -v '^#' | awk '{print $1}' |grep -v $HOSTNAME`
   fi
   if [[ "$VERBOSE" == True ]]; then
-    echo "*** Symlinked $DOTFILE to $HOME/$REALFILE ***"
+    echo "*** Getting a list of hosts for $type ***"
+    for host in $HOSTS; do
+      echo "*** Found: $host ***"
+    done
   fi
-done
-removebrokenlinks
 }
 
-
-function gitremote(){
-getgitorigin
-if [[ "$1" == "all" ]]; then
-  gethosts git
-  hosts=$HOSTS
-else
-  validhost git $1
-  hosts=$1
-fi
-for host in $hosts; do
-  if [[ "$2" == "pull" ]]; then
-    echo "*** Running a git pull of $DOTFILES on $host ***"
-    if [[ "$3" == "all" ]]; then
-      ssh $host "$REMOTEDSPATH/dotsync -U $DOTSYNCOPT && $REMOTEDSPATH/dotsync -L $DOTSYNCOPT"
-    else
-      ssh $host "$REMOTEDSPATH/dotsync -u $DOTSYNCOPT && $REMOTEDSPATH/dotsync -L $DOTSYNCOPT"
-    fi
-    echo
-  elif [[ "$2" == "init" ]]; then
-    echo "*** Initialising $host with $DOTFILES from $ORIGIN ***"
-    ssh -t $host "if [[ -e $DOTFILES ]]; then mv $DOTFILES $BACKUPDIR.old; fi; if [ -L .ssh ]; then rm .ssh; fi; \
-      git clone --recursive $ORIGIN \$HOME/$DOTFILES && $REMOTEDSPATH/dotsync -d $DOTFILES -I $DOTSYNCOPT && $REMOTEDSPATH/dotsync -d $DOTFILES -L $DOTSYNCOPT"
+function rsyncremote()
+{
+  if [[ "$1" == "all" ]]; then
+    gethosts rsync
+    hosts=$HOSTS
+  else
+    validhost rsync $1
+    hosts=$1
   fi
-done
-}
-
-function validhost(){
-chktype=$1
-chkhost=$2
-if [[ "$VERBOSE" == True ]]; then
-  echo "*** Checking if $chkhost is valid for $chktype from $HOSTNAME ***"
-fi
-VALID=`sed -n '/\[hosts\]/,/\[endhosts\]/p' $CONFIG |grep -v '^\[.*hosts'| \
-  egrep "($chktype=ANY|$chktype=$HOSTNAME)" | grep -v '^#' | awk '{print $1}'| grep ^$chkhost`
-if [[ "$VALID" == "" ]]; then
-  echo "*** Cant find $chkhost in $CONFIG for $chktype from $HOSTNAME ***"
-  exit 1
-fi
-}
-
-
-function gethosts(){
-type=$1
-if [[ "$type" == "masters" ]];then
-  HOSTS=`sed -n '/\[hosts\]/,/\[endhosts\]/p' $CONFIG | grep -v '^\[.*hosts'| grep -v '^#' |  \
-    awk -F"=" '{print $NF}'|uniq | awk '{print $1}'|egrep -v '(ANY|NONE)' |grep -v $HOSTNAME`
-
-else
-  HOSTS=`sed -n '/\[hosts\]/,/\[endhosts\]/p' $CONFIG |grep -v '^\[.*hosts'| \
-    egrep "($type=ANY|$type=$HOSTNAME)" | grep -v '^#' | awk '{print $1}' |grep -v $HOSTNAME`
-fi
-if [[ "$VERBOSE" == True ]]; then
-  echo "*** Getting a list of hosts for $type ***"
-  for host in $HOSTS; do
-    echo "*** Found: $host ***"
-  done
-fi
-}
-
-function rsyncremote(){
-if [[ "$1" == "all" ]]; then
-  gethosts rsync
-  hosts=$HOSTS
-else
-  validhost rsync $1
-  hosts=$1
-fi
-cd $HOME/$DOTFILES
-for host in $hosts; do
-  if [[ "$2" == "init" || "$2" == "push" ]]; then
-    echo "*** Syncing $host with $DOTFILES using rsync ***"
-    rsync -azRp $RSYNCOPT --delete --delete-excluded --exclude-from=.rsyncignore . $host:$DOTFILES/
-    ssh $host "$REMOTEDSPATH/dotsync -L $DOTSYNCOPT && \
-      if [[ -d $DOTFILES/.git ]]; then rm -rf $DOTFILES/.git/; fi && \
-        echo "$host from $HOSTNAME" > $DOTFILES/.rsync"
-    echo
-  fi
-done
-cd
-}
-
-function gitpull(){
-getgitorigin
-cd $HOME/$DOTFILES
-isgitlayout
-echo "*** Pulling latest changes from $ORIGIN ***"
-git pull $GITOPT
-if [[ "$1" == "all" ]]; then
-  initlocal 
   cd $HOME/$DOTFILES
-  echo "*** Pulling latest changes for submodules ***"
-  git submodule $GITSUBOPT update --init
-  git submodule $GITSUBOPT foreach --recursive git pull $GITOPT origin master
-fi
-cd
+  for host in $hosts; do
+    if [[ "$2" == "init" || "$2" == "push" ]]; then
+      echo "*** Syncing $host with $DOTFILES using rsync ***"
+      rsync -azRp $RSYNCOPT --delete --delete-excluded --exclude-from=.rsyncignore . $host:$DOTFILES/
+      ssh $host "$REMOTEDSPATH/dotsync -L $DOTSYNCOPT && \
+        if [[ -d $DOTFILES/.git ]]; then rm -rf $DOTFILES/.git/; fi && \
+          echo "$host from $HOSTNAME" > $DOTFILES/.rsync"
+      echo
+    fi
+  done
+  cd
 }
 
-function gitcommit(){
-getgitorigin
-cd $HOME/$DOTFILES
-echo "*** Commiting latest changes to the repo ***"
-git commit -a $GITOPT
-cd
+function gitpull()
+{
+  getgitorigin
+  cd $HOME/$DOTFILES
+  isgitlayout
+  echo "*** Pulling latest changes from $ORIGIN ***"
+  git pull $GITOPT
+  if [[ "$1" == "all" ]]; then
+    initlocal 
+    cd $HOME/$DOTFILES
+    echo "*** Pulling latest changes for submodules ***"
+    git submodule $GITSUBOPT update --init
+    git submodule $GITSUBOPT foreach --recursive git pull $GITOPT origin master
+  fi
+  cd
 }
 
-function gitpush(){
-getgitorigin
-cd $HOME/$DOTFILES
-echo "*** Pushing changes upstream to $ORIGIN ***" && \
-  git push $GITOPT
-cd
+function gitcommit()
+{
+  getgitorigin
+  cd $HOME/$DOTFILES
+  echo "*** Commiting latest changes to the repo ***"
+  git commit -a $GITOPT
+  cd
 }
 
-function removebrokenlinks(){
-if [[ "$VERBOSE" == True ]]; then
-  echo "*** Removing broken symlinks from $HOME ***"
-fi
-find $HOME -maxdepth 1 -name ".*" -type l | while read f; do if [ ! -e "$f"  ]; then rm -f "$f"; fi; done
+function gitpush()
+{
+  getgitorigin
+  cd $HOME/$DOTFILES
+  echo "*** Pushing changes upstream to $ORIGIN ***" && \
+    git push $GITOPT
+  cd
 }
 
-function isgitlayout(){
-if [[ ! -d .git ]]; then
-  echo "*** Not a git repo, exiting ***"
-  exit 1
-fi
+function removebrokenlinks()
+{
+  if [[ "$VERBOSE" == True ]]; then
+    echo "*** Removing broken symlinks from $HOME ***"
+  fi
+  find $HOME -maxdepth 1 -name ".*" -type l | while read f; do if [ ! -e "$f"  ]; then rm -f "$f"; fi; done
+}
+
+function isgitlayout()
+{
+  if [[ ! -d .git ]]; then
+    echo "*** Not a git repo, exiting ***"
+    exit 1
+  fi
 }
 
 usage()
@@ -319,195 +337,203 @@ usage()
 EOF
 }
 
-function listhosts(){
-echo "dotsync $DOTSYNC_VERSION configuration:"
-echo
-getgitorigin
-if [[ ! -z "$ORIGIN" ]]; then
-  echo "Origin git server: $ORIGIN"
+function listconfig()
+{
+  echo "dotsync $DOTSYNC_VERSION configuration:"
   echo
-fi
-gethosts masters
-if [[ ! -z "$HOSTS" ]]; then
-  echo "Configured dotsync master servers:"
-  echo
-  for host in $HOSTS; do
-    echo "        $host"
-  done
-  echo
-fi
-gethosts git
-if [[ ! -z "$HOSTS" ]]; then
-  echo "Configured dotsync hosts from $HOSTNAME with git:"
-  echo
-  for host in $HOSTS; do
-    echo "        $host"
-  done
-  echo
-fi
-gethosts rsync
-if [[ ! -z "$HOSTS" ]]; then
-  echo "Configured dotsync hosts from $HOSTNAME with rsync:"
-  echo
-  for host in $HOSTS; do
-    echo "        $host"
-  done
-  echo
-fi
-getfiles
-if [[ ! -z "$SRCFILES" ]]; then
-  echo "Configured dotfiles:"
-  echo
-  for file in $SRCFILES; do
-    getrealdotfile $file
-    echo "        $DOTFILE > $REALFILE"
-  done
-  echo
-fi
+  getgitorigin
+  if [[ ! -z "$ORIGIN" ]]; then
+    echo "Origin git server: $ORIGIN"
+    echo
+  fi
+  gethosts masters
+  if [[ ! -z "$HOSTS" ]]; then
+    echo "Configured dotsync master servers:"
+    echo
+    for host in $HOSTS; do
+      echo "        $host"
+    done
+    echo
+  fi
+  gethosts git
+  if [[ ! -z "$HOSTS" ]]; then
+    echo "Configured dotsync hosts from $HOSTNAME with git:"
+    echo
+    for host in $HOSTS; do
+      echo "        $host"
+    done
+    echo
+  fi
+  gethosts rsync
+  if [[ ! -z "$HOSTS" ]]; then
+    echo "Configured dotsync hosts from $HOSTNAME with rsync:"
+    echo
+    for host in $HOSTS; do
+      echo "        $host"
+    done
+    echo
+  fi
+  getfiles
+  if [[ ! -z "$SRCFILES" ]]; then
+    echo "Configured dotfiles:"
+    echo
+    for file in $SRCFILES; do
+      getrealdotfile $file
+      echo "        $DOTFILE > $REALFILE"
+    done
+    echo
+  fi
 }
 
-function options() {
-while getopts "haAH:rILuUPd:f:vl" OPTION
-do
-  case $OPTION in
-    h)
-      usage
-      exit 1
-      ;;
-    H)
-      SERVER=$OPTARG
-      if [[ $(echo "$SERVER" | grep ".*\..*\..*") == 0 && ! "$SERVER" == "ALL" ]]; then
-        echo "*** Hostname must be a fully qualified domain name or 'ALL' ***"
+function options()
+{
+  while getopts "haAH:rILuUPd:f:vl" OPTION
+  do
+    case $OPTION in
+      h)
         usage
         exit 1
-      fi
+        ;;
+      H)
+        SERVER=$OPTARG
+        if [[ $(echo "$SERVER" | grep ".*\..*\..*") == 0 && ! "$SERVER" == "ALL" ]]; then
+          echo "*** Hostname must be a fully qualified domain name or 'ALL' ***"
+          usage
+          exit 1
+        fi
+        ;;
+      r)
+        RSYNC=True
+        ;;
+      v)
+        VERBOSE=True
+        GITOPT="-v"
+        GITSUBOPT=""
+        RSYNCOPT="-v"
+        DOTSYNCOPT="-v"
+        ;;
+      I)
+        ACTION=init
+        ;;
+      L)
+        ACTION=link
+        ;;
+      u)
+        ACTION=pull
+        ;;
+      U)
+        ACTION=pull
+        UPDATEOPT="all"
+        ;;
+      P)
+        ACTION=push
+        ;;
+      A)
+        ACTION=all
+        ALLOPT="all"
+        ;;
+      a)
+        ACTION=all
+        ;;
+      l)
+        ACTION=list
+        ;;
+      d)
+        DOTFILES=$OPTARG
+        ;;
+      f)
+        CONFIG=$OPTARG
+        ;;
+      *)
+        usage
+        exit
+        ;;
+    esac
+  done
+}
+
+function init()
+{
+  if [[ -z $SERVER ]]; then
+    initlocal 
+  else
+    if [[ $RSYNC == True ]]; then
+      rsyncremote $SERVER init
+    else
+      gitremote $SERVER init
+    fi
+  fi
+  exit
+}
+
+function update()
+{
+  if [[ -z $SERVER ]]; then
+    gitpull $UPDATEOPT
+  else
+    if [[ $RSYNC == True ]]; then
+      rsyncremote $SERVER push
+    else
+      gitremote $SERVER pull $UPDATEOPT
+    fi
+  fi
+  exit
+}
+
+function checkin()
+{
+  gitcommit && gitpush
+  exit
+}
+
+function allhosts()
+{
+  gitremote all pull $ALLOPT
+  rsyncremote all push
+  if [[ "$SERVER" == "ALL" ]]; then
+    gethosts masters
+    if [[ "$ALLOPT" == "all" ]]; then
+      ALLOPT='-A'
+    else
+      ALLOPT='-a'
+    fi
+    for host in $HOSTS; do
+      echo "*** Running a dotsync $ALLOPT on $host ***"
+      echo
+      ssh $host "$REMOTEDSPATH/dotsync $ALLOPT $DOTSYNCOPT"
+    done
+  fi
+  exit
+}
+
+function doaction()
+{
+  # Do stuff
+  case $ACTION in
+    init)
+      init
       ;;
-    r)
-      RSYNC=True
-      ;;
-    v)
-      VERBOSE=True
-      GITOPT="-v"
-      GITSUBOPT=""
-      RSYNCOPT="-v"
-      DOTSYNCOPT="-v"
-      ;;
-    I)
-      ACTION=init
-      ;;
-    L)
-      ACTION=link
-      ;;
-    u)
-      ACTION=pull
-      ;;
-    U)
-      ACTION=pull
-      UPDATEOPT="all"
-      ;;
-    P)
-      ACTION=push
-      ;;
-    A)
-      ACTION=all
-      ALLOPT="all"
-      ;;
-    a)
-      ACTION=all
-      ;;
-    l)
-      ACTION=list
-      ;;
-    d)
-      DOTFILES=$OPTARG
-      ;;
-    f)
-      CONFIG=$OPTARG
-      ;;
-    *)
-      usage
+    list)
+      listconfig
       exit
       ;;
+    link)
+      symlink
+      exit
+      ;;
+    pull)
+      update
+      ;;
+    push)
+      checkin
+      exit
+      ;;
+    all)
+      allhosts
+      ;;
   esac
-done
 }
 
-function init() {
-if [[ -z $SERVER ]]; then
-  initlocal 
-else
-  if [[ $RSYNC == True ]]; then
-    rsyncremote $SERVER init
-  else
-    gitremote $SERVER init
-  fi
-fi
-exit
-}
-
-function update(){
-if [[ -z $SERVER ]]; then
-  gitpull $UPDATEOPT
-else
-  if [[ $RSYNC == True ]]; then
-    rsyncremote $SERVER push
-  else
-    gitremote $SERVER pull $UPDATEOPT
-  fi
-fi
-exit
-}
-
-function checkin(){
-gitcommit && gitpush
-exit
-}
-
-function allhosts(){
-gitremote all pull $ALLOPT
-rsyncremote all push
-if [[ "$SERVER" == "ALL" ]]; then
-  gethosts masters
-  if [[ "$ALLOPT" == "all" ]]; then
-    ALLOPT='-A'
-  else
-    ALLOPT='-a'
-  fi
-  for host in $HOSTS; do
-    echo "*** Running a dotsync $ALLOPT on $host ***"
-    echo
-    ssh $host "$REMOTEDSPATH/dotsync $ALLOPT $DOTSYNCOPT"
-  done
-fi
-exit
-}
-
-function doaction(){
-# Do stuff
-case $ACTION in
-  init)
-    init
-    ;;
-  list)
-    listhosts
-    exit
-    ;;
-  link)
-    symlink
-    exit
-    ;;
-  pull)
-    update
-    ;;
-  push)
-    checkin
-    exit
-    ;;
-  all)
-    allhosts
-    ;;
-esac
-}
 # MAIN
 checknotroot
 getconfig
