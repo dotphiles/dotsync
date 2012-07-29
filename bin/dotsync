@@ -132,6 +132,7 @@ function getgitorigin()
 
 function symlink()
 {
+  removebrokenlinks
   getfiles
   echo "*** Symlinking dotfiles from $HOME/$DOTFILES to $HOME on $HOSTNAME ***"
   for file in $SRCFILES ; do
