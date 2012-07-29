@@ -26,6 +26,8 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
+DOTSYNC_VERSION=0.1.1
+
 PROG=`basename $0`
 if [[ -z "$DOTFILES" ]]; then
   DOTFILES=".dotfiles"
@@ -318,7 +320,7 @@ EOF
 }
 
 function listhosts(){
-echo "dotsync configuration:"
+echo "dotsync $DOTSYNC_VERSION configuration:"
 echo
 getgitorigin
 if [[ ! -z "$ORIGIN" ]]; then
