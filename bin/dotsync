@@ -98,7 +98,6 @@ function getrealdotfile()
   DSTFILE=`echo $file | awk -F: '{print $2}'`
 
   if [[ $DSTFILE = "" ]]; then
-    
     DSTFILE=".`basename $SRCFILE`"
   fi
 
