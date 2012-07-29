@@ -11,3 +11,4 @@ ssh/known_hosts
 gnupg/secring.gpg
 vim/.*
 vim/backup/*
+
