@@ -10,7 +10,7 @@
 # dotfiles to symlink
 #
 # srcfile:dstfile
-# dstfile will be '.$srcfile' by default
+# dstfile will be '.$srcfile' by default (with path removed)
 #
 [files]
 dotsyncrc
