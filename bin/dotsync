@@ -132,13 +132,14 @@ function getgitorigin()
 
 function symlink()
 {
+  removebrokenlinks
   getfiles
   echo "*** Symlinking dotfiles from $HOME/$DOTFILES to $HOME on $HOSTNAME ***"
   for file in $SRCFILES ; do
     getrealdotfile $file
 
     if [[ -e "$DOTFILE" ]] && [[ ! -h "$DOTFILE" ]]; then
-      BACKUP="$BACKUPDIR/$file"
+      BACKUP="$BACKUPDIR/`basename $file`"
       echo "*** $DOTFILE already exists, backing up in $BACKUP ***"
       cp -r $DOTFILE $BACKUP
       rm -rf $DOTFILE
