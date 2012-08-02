@@ -70,10 +70,10 @@ Configuration
 
 ### ~/.dotsyncrc
 
-This config determines which hosts to sync, how, where from and which 
+This config determines which hosts to sync, how, where from and which
 dotfiles to symlink into your homedir. 
 
-This file can be included in the repo, and dotsync will use it if its not 
+This file can be included in the repo, and dotsync will use it if its not
 already symlinked.
 
 See [templates/dotsyncrc][6]
@@ -91,6 +91,27 @@ Controls which files are ignored when rsyncing a remote host, add any temporary
 and 'secret' files here.
 
 See [templates/rsyncignore][8]
+
+Custom Dotfiles
+---------------
+
+Sometimes its handy to link a specific file on a specific machine, or to have a
+local dotfile in place instead.
+
+If you have the following in dotsyncrc
+
+    [files]
+    dotfile
+    [endfiles]
+
+dotsync will look for
+
+    ~/$DOTFILES/dotfile.d/localhost
+    ~/$DOTFILES/dotfile.d/$HOSTNAME
+    ~/$DOTFILES/dotfile.d/$DOMAIN
+
+And link the first one it finds instead of the standard dotfile.  The `localhost`
+dotfile should be excuded from your repo.
 
 Issues
 ------
