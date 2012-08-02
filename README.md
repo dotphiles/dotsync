@@ -113,6 +113,58 @@ dotsync will look for
 And link the first one it finds instead of the standard dotfile.  The `localhost`
 dotfile should be excuded from your repo.
 
+Remote Machines
+---------------
+
+**WARNING! This is the least tested and resilient code, i use it to sync a few
+hundred machines without problem but you can easily wipe out your ssh keys on
+remote machines if anything goes wrong....be prepared**
+
+dotsync is based around the idea of having lots of remote machines, that you want
+to sync your dotfiles to.
+
+e.g.
+
+             *origin*
+          ----github------   remoteservers:r
+        /         |        \      |
+    desktop:g----laptop:g----workdesktop:g
+                    |             |
+                mac-mini:r   workservers:r
+
+and the following dotsyncrc
+
+    [hosts]
+    laptop                       git=ANY
+    desktop                      git=laptop
+    mac-mini                     rsync=laptop
+    workdesktop                  git=laptop
+    workserver1                  rsync=workdesktop
+    workserver2                  rsync=workdesktop
+    workserver3                  rsync=workdesktop
+    remoteserver1                rsync=workdesktop
+    remoteserver1                rsync=workdesktop
+    remoteserver3                rsync=workdesktop
+    [endhosts]
+
+Runing a `dotsync -A` on *laptop* would
+
+  - git pull from github
+  - connect to *workdesktop* & *desktop* & git pull dotfiles from github
+  - rsync dotfiles to mac-mini
+
+Runing a `dotsync -A` on *workdesktop* would
+
+  - git pull from github
+  - rsync dotfiles to *workserver{1,2,3}* & *remoteserver{1,2,3}*
+
+These can all be done with `dotsync -A -H ALL` which when run on *laptop*, **should**
+
+  - git pull from github
+  - connect to *workdesktop* & *desktop* & git pull dotfiles from github
+  - rsync dotfiles to mac-mini
+  - ssh to *workdesktop* & rsync dotfiles to *workserver{1,2,3}* & *remoteserver{1,2,3}*
+
 Issues
 ------
 
