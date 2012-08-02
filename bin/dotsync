@@ -107,7 +107,7 @@ function getrealdotfile()
     REALFILE="$HOME/$DOTFILES/$SRCFILE.d/$HOSTNAME"
   elif [[ -f "$HOME/$DOTFILES/$SRCFILE.d/$DOMAIN" ]]; then
     REALFILE="$HOME/$DOTFILES/$SRCFILE.d/$DOMAIN"
-  else [[ -f "$HOME/$DOTFILES/$SRCFILE" ]]; then
+  else
     REALFILE="$HOME/$DOTFILES/$SRCFILE"
   fi
 
