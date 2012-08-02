@@ -101,10 +101,10 @@ function getrealdotfile()
     DSTFILE=".`basename $SRCFILE`"
   fi
 
-  if [[ -e "$HOME/$DOTFILES/$SRCFILE.local" ]]; then
-    REALFILE="$HOME/$DOTFILES/$SRCFILE.local"
-  elif [[ -e "$HOME/$DOTFILES/$SRCFILE.$HOSTNAME" ]]; then
-    REALFILE="$HOME/$DOTFILES/$SRCFILE.$HOSTNAME"
+  if [[ -e "$HOME/$DOTFILES/$SRCFILE.d/localhost" ]]; then
+    REALFILE="$HOME/$DOTFILES/$SRCFILE.d/localhost"
+  elif [[ -e "$HOME/$DOTFILES/$SRCFILE.d/$HOSTNAME" ]]; then
+    REALFILE="$HOME/$DOTFILES/$SRCFILE.d/$HOSTNAME"
   else
     REALFILE="$HOME/$DOTFILES/$SRCFILE"
   fi
