@@ -1,18 +1,18 @@
 dotsync
 =======
 
-dotsync keeps your local dotfiles in sync with a git repository and keeps 
-multiple remote machines in sync, either with them pulling from the git 
+dotsync keeps your local dotfiles in sync with a git repository and keeps
+multiple remote machines in sync, either with them pulling from the git
 repo or pushed via rsync
 
-Master servers can be assigned, for cases where groups of machines are 
+Master servers can be assigned, for cases where groups of machines are
 behind firewalls or only accessible from a certain location.
 
 Requirements
 ------------
 
 dotsync assumes that you have ssh setup correctly, with ssh-agent and configs
-for correct usernames etc, if you can 'ssh hostname' it probably wont work 
+for correct usernames etc, if you can 'ssh hostname' it probably wont work
 and if your asked for passwords it will take hours with any number of machines.
 
 Installation
@@ -71,7 +71,7 @@ Configuration
 ### ~/.dotsyncrc
 
 This config determines which hosts to sync, how, where from and which
-dotfiles to symlink into your homedir. 
+dotfiles to symlink into your homedir.
 
 This file can be included in the repo, and dotsync will use it if its not
 already symlinked.
@@ -231,3 +231,4 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 [6]: https://github.com/dotphiles/dotsync/blob/master/templates/dotsyncrc
 [7]: https://github.com/dotphiles/dotsync/blob/master/templates/gitignore
 [8]: https://github.com/dotphiles/dotsync/blob/master/templates/rsyncignore
+
