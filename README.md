@@ -1,18 +1,18 @@
 dotsync
 =======
 
-dotsync keeps your local dotfiles in sync with a git repository and keeps 
-multiple remote machines in sync, either with them pulling from the git 
+dotsync keeps your local dotfiles in sync with a git repository and keeps
+multiple remote machines in sync, either with them pulling from the git
 repo or pushed via rsync
 
-Master servers can be assigned, for cases where groups of machines are 
+Master servers can be assigned, for cases where groups of machines are
 behind firewalls or only accessible from a certain location.
 
 Requirements
 ------------
 
 dotsync assumes that you have ssh setup correctly, with ssh-agent and configs
-for correct usernames etc, if you can 'ssh hostname' it probably wont work 
+for correct usernames etc, if you can 'ssh hostname' it probably wont work
 and if your asked for passwords it will take hours with any number of machines.
 
 Installation
@@ -71,7 +71,7 @@ Configuration
 ### ~/.dotsyncrc
 
 This config determines which hosts to sync, how, where from and which
-dotfiles to symlink into your homedir. 
+dotfiles to symlink into your homedir.
 
 This file can be included in the repo, and dotsync will use it if its not
 already symlinked.
@@ -112,6 +112,58 @@ dotsync will look for
 
 And link the first one it finds instead of the standard dotfile.  The `localhost`
 dotfile should be excuded from your repo.
+
+Remote Machines
+---------------
+
+**WARNING! This is the least tested and resilient code, i use it to sync a few
+hundred machines without problem but you can easily wipe out your ssh keys on
+remote machines if anything goes wrong....be prepared**
+
+dotsync is based around the idea of having lots of remote machines, that you want
+to sync your dotfiles to.
+
+e.g.
+
+             *origin*
+          ----github------   remoteservers:r
+        /         |        \      |
+    desktop:g----laptop:g----workdesktop:g
+                    |             |
+                mac-mini:r   workservers:r
+
+and the following dotsyncrc
+
+    [hosts]
+    laptop                       git=ANY
+    desktop                      git=laptop
+    mac-mini                     rsync=laptop
+    workdesktop                  git=laptop
+    workserver1                  rsync=workdesktop
+    workserver2                  rsync=workdesktop
+    workserver3                  rsync=workdesktop
+    remoteserver1                rsync=workdesktop
+    remoteserver1                rsync=workdesktop
+    remoteserver3                rsync=workdesktop
+    [endhosts]
+
+Runing a `dotsync -A` on *laptop* would
+
+  - git pull from github
+  - connect to *workdesktop* & *desktop* & git pull dotfiles from github
+  - rsync dotfiles to mac-mini
+
+Runing a `dotsync -A` on *workdesktop* would
+
+  - git pull from github
+  - rsync dotfiles to *workserver{1,2,3}* & *remoteserver{1,2,3}*
+
+These can all be done with `dotsync -A -H ALL` which when run on *laptop*, **should**
+
+  - git pull from github
+  - connect to *workdesktop* & *desktop* & git pull dotfiles from github
+  - rsync dotfiles to mac-mini
+  - ssh to *workdesktop* & rsync dotfiles to *workserver{1,2,3}* & *remoteserver{1,2,3}*
 
 Issues
 ------
@@ -179,3 +231,4 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 [6]: https://github.com/dotphiles/dotsync/blob/master/templates/dotsyncrc
 [7]: https://github.com/dotphiles/dotsync/blob/master/templates/gitignore
 [8]: https://github.com/dotphiles/dotsync/blob/master/templates/rsyncignore
+
