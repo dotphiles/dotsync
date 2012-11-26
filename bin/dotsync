@@ -188,17 +188,21 @@ function gitremote()
   fi
   for host in $hosts; do
     if [[ "$2" == "pull" ]]; then
-      echo "*** Running a git pull of $DOTFILES on $host ***"
-      if [[ "$3" == "all" ]]; then
-        ssh $host "$REMOTEDSPATH/dotsync -U $DOTSYNCOPT && $REMOTEDSPATH/dotsync -L $DOTSYNCOPT"
-      else
-        ssh $host "$REMOTEDSPATH/dotsync -u $DOTSYNCOPT && $REMOTEDSPATH/dotsync -L $DOTSYNCOPT"
+      if `ping -c1 $host > /dev/null`; then
+        echo "*** Running a git pull of $DOTFILES on $host ***"
+        if [[ "$3" == "all" ]]; then
+          ssh $host "$REMOTEDSPATH/dotsync -U $DOTSYNCOPT && $REMOTEDSPATH/dotsync -L $DOTSYNCOPT"
+        else
+          ssh $host "$REMOTEDSPATH/dotsync -u $DOTSYNCOPT && $REMOTEDSPATH/dotsync -L $DOTSYNCOPT"
+        fi
+        echo
+      elif [[ "$2" == "init" ]]; then
+        echo "*** Initialising $host with $DOTFILES from $ORIGIN ***"
+        ssh -t $host "if [[ -e $DOTFILES ]]; then mv $DOTFILES $BACKUPDIR.old; fi; if [ -L .ssh ]; then rm .ssh; fi; \
+          git clone --recursive $ORIGIN \$HOME/$DOTFILES && $REMOTEDSPATH/dotsync -d $DOTFILES -I $DOTSYNCOPT && $REMOTEDSPATH/dotsync -d $DOTFILES -L $DOTSYNCOPT"
       fi
-      echo
-    elif [[ "$2" == "init" ]]; then
-      echo "*** Initialising $host with $DOTFILES from $ORIGIN ***"
-      ssh -t $host "if [[ -e $DOTFILES ]]; then mv $DOTFILES $BACKUPDIR.old; fi; if [ -L .ssh ]; then rm .ssh; fi; \
-        git clone --recursive $ORIGIN \$HOME/$DOTFILES && $REMOTEDSPATH/dotsync -d $DOTFILES -I $DOTSYNCOPT && $REMOTEDSPATH/dotsync -d $DOTFILES -L $DOTSYNCOPT"
+    else
+      echo "*** $host is down, not running a git pull of $DOTFILES ***"
     fi
   done
 }
@@ -250,12 +254,16 @@ function rsyncremote()
   cd $HOME/$DOTFILES
   for host in $hosts; do
     if [[ "$2" == "init" || "$2" == "push" ]]; then
-      echo "*** Syncing $host with $DOTFILES using rsync ***"
-      rsync -azRp $RSYNCOPT --delete --delete-excluded --exclude-from=.rsyncignore . $host:$DOTFILES/
-      ssh $host "$REMOTEDSPATH/dotsync -L $DOTSYNCOPT && \
-        if [[ -d $DOTFILES/.git ]]; then rm -rf $DOTFILES/.git/; fi && \
-          echo "$host from $HOSTNAME" > $DOTFILES/.rsync"
-      echo
+      if `ping -c1 $host > /dev/null`; then
+        echo "*** Syncing $host with $DOTFILES using rsync ***"
+        rsync -azRp $RSYNCOPT --delete --delete-excluded --exclude-from=.rsyncignore . $host:$DOTFILES/
+        ssh $host "$REMOTEDSPATH/dotsync -L $DOTSYNCOPT && \
+          if [[ -d $DOTFILES/.git ]]; then rm -rf $DOTFILES/.git/; fi && \
+            echo "$host from $HOSTNAME" > $DOTFILES/.rsync"
+        echo
+      else
+        echo "*** $host is down, not running a rsync of $DOTFILES ***"
+      fi
     fi
   done
   cd
