@@ -399,6 +399,7 @@ function listconfig()
 
 function options()
 {
+  (( $# )) || usage
   while getopts "haAH:rILuUPd:f:vl" OPTION
   do
     case $OPTION in
