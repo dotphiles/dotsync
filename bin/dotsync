@@ -169,7 +169,7 @@ function symlink()
       fi
     fi
     if [[ "$VERBOSE" == True ]]; then
-      echo "*** Symlinked $DOTFILE to $HOME/$REALFILE ***"
+      echo "*** Symlinked $DOTFILE to $REALFILE ***"
     fi
   done
   removebrokenlinks
