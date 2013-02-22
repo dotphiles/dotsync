@@ -23,6 +23,7 @@ dotsyncrc
 #bin:bin
 #ctags/ctags
 #cmus
+#curl/curlrc
 #git/gitconfig
 #git/gitignore
 #git/gitattributes
