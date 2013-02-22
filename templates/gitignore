@@ -3,6 +3,9 @@
 #
 # Ignore these files in this repo
 #
+# Authors:
+#   Ben O'Hara <bohara@gmail.com>
+#
 
 .*.swp
 .DS_Store
