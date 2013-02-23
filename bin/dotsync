@@ -105,6 +105,8 @@ function getrealdotfile()
     REALFILE="$HOME/$DOTFILES/$SRCFILE.d/localhost"
   elif [[ -f "$HOME/$DOTFILES/$SRCFILE.d/$HOSTNAME" ]]; then
     REALFILE="$HOME/$DOTFILES/$SRCFILE.d/$HOSTNAME"
+  elif [[ -f "$HOME/$DOTFILES/$SRCFILE.d/$DZHOST" ]]; then
+    REALFILE="$HOME/$DOTFILES/$SRCFILE.d/$DZHOST"
   elif [[ -f "$HOME/$DOTFILES/$SRCFILE.d/$DOMAIN" ]]; then
     REALFILE="$HOME/$DOTFILES/$SRCFILE.d/$DOMAIN"
   else
@@ -191,14 +193,14 @@ function gitremote()
       if [[ "$2" == "pull" ]]; then
         echo "*** Running a git pull of $DOTFILES on $host ***"
         if [[ "$3" == "all" ]]; then
-          ssh $host "$REMOTEDSPATH/dotsync -U $DOTSYNCOPT && $REMOTEDSPATH/dotsync -L $DOTSYNCOPT"
+          DZHOST=$host ssh $host "$REMOTEDSPATH/dotsync -U $DOTSYNCOPT && $REMOTEDSPATH/dotsync -L $DOTSYNCOPT"
         else
-          ssh $host "$REMOTEDSPATH/dotsync -u $DOTSYNCOPT && $REMOTEDSPATH/dotsync -L $DOTSYNCOPT"
+          DZHOST=$host ssh $host "$REMOTEDSPATH/dotsync -u $DOTSYNCOPT && $REMOTEDSPATH/dotsync -L $DOTSYNCOPT"
         fi
         echo
       elif [[ "$2" == "init" ]]; then
         echo "*** Initialising $host with $DOTFILES from $ORIGIN ***"
-        ssh -t $host "if [[ -e $DOTFILES ]]; then mv $DOTFILES $BACKUPDIR.old; fi; if [ -L .ssh ]; then rm .ssh; fi; \
+        DZHOST=$host ssh -t $host "if [[ -e $DOTFILES ]]; then mv $DOTFILES $BACKUPDIR.old; fi; if [ -L .ssh ]; then rm .ssh; fi; \
           git clone --recursive $ORIGIN \$HOME/$DOTFILES && $REMOTEDSPATH/dotsync -d $DOTFILES -I $DOTSYNCOPT && $REMOTEDSPATH/dotsync -d $DOTFILES -L $DOTSYNCOPT"
       fi
     else
@@ -258,7 +260,7 @@ function rsyncremote()
       if `ping -c1 $host > /dev/null`; then
         echo "*** Syncing $host with $DOTFILES using rsync ***"
         rsync -azRp $RSYNCOPT --delete --delete-excluded --exclude-from=.rsyncignore . $host:$DOTFILES/
-        ssh $host "$REMOTEDSPATH/dotsync -L $DOTSYNCOPT && \
+        DZHOST=$host ssh $host "$REMOTEDSPATH/dotsync -L $DOTSYNCOPT && \
           if [[ -d $DOTFILES/.git ]]; then rm -rf $DOTFILES/.git/; fi && \
             echo "$host from $HOSTNAME" > $DOTFILES/.rsync"
         echo
@@ -513,7 +515,7 @@ function allhosts()
     for host in $HOSTS; do
       echo "*** Running a dotsync $ALLOPT on $host ***"
       echo
-      ssh $host "$REMOTEDSPATH/dotsync $ALLOPT $DOTSYNCOPT"
+      DZHOST=$host ssh $host "$REMOTEDSPATH/dotsync $ALLOPT $DOTSYNCOPT"
     done
   fi
   exit
