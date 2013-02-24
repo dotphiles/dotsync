@@ -202,7 +202,7 @@ improve its performance, do not hesitate to fork and send pull requests.
 License
 -------
 
-Copyright (c) 2012 Ben O'Hara <bohara@gmail.com>
+Copyright (c) 2012 [dotsync contributers][9]
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
@@ -231,4 +231,5 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 [6]: https://github.com/dotphiles/dotsync/blob/master/templates/dotsyncrc
 [7]: https://github.com/dotphiles/dotsync/blob/master/templates/gitignore
 [8]: https://github.com/dotphiles/dotsync/blob/master/templates/rsyncignore
+[9]: https://github.com/dotphiles/dotsync/graphs/contributors
 
