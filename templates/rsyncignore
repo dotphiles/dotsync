@@ -3,6 +3,9 @@
 #
 # Ignore these files when rsyncing to remote machines
 #
+# Authors:
+#   Ben O'Hara <bohara@gmail.com>
+#
 
 .git/
 backup/

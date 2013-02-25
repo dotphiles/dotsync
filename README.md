@@ -12,7 +12,7 @@ Requirements
 ------------
 
 dotsync assumes that you have ssh setup correctly, with ssh-agent and configs
-for correct usernames etc, if you can 'ssh hostname' it probably wont work
+for correct usernames etc, if you can't 'ssh hostname' it probably wont work
 and if your asked for passwords it will take hours with any number of machines.
 
 Installation
@@ -165,44 +165,16 @@ These can all be done with `dotsync -A -H ALL` which when run on *laptop*, **sho
   - rsync dotfiles to mac-mini
   - ssh to *workdesktop* & rsync dotfiles to *workserver{1,2,3}* & *remoteserver{1,2,3}*
 
-Issues
-------
-
-If you are not sure, keep an ssh session open to any remote machines, in case
-it wipes your ssh keys but should be safe.
+Backups
+-------
 
 Existing dotfiles will be backed up in `~/.backup/dotfiles/`
 Existing dotfile repos will be backed up as `~/.backup/dotfiles.old/`
 
-Contribute
-----------
-
-This project would not exist without all of its users and [contributors][1].
-
-If you have ideas on how to make the configuration easier to maintain or
-improve its performance, do not hesitate to fork and send pull requests.
-
-### Issue Reporting
-
-   - Check that the [issue][2] has not already been reported.
-   - Check that the [issue][2] has not already been fixed in the latest code.
-   - Open an [issue][2] with a clear title and description in grammatically correct,
-     complete sentences.
-
-### Pull Request
-
-   - Read [how to properly contribute to open source projects on GitHub][3].
-   - Use a topic branch to easily amend a pull request later, if necessary.
-   - Write [good commit messages][4].
-   - Squash commits on the topic branch before opening a pull request.
-   - Use the same coding style and spacing.
-   - Open a [pull request][5] that relates to but one subject with a clear
-     title and description in gramatically correct, complete sentences.
-
 License
 -------
 
-Copyright (c) 2012 Ben O'Hara <bohara@gmail.com>
+Copyright (c) 2012 [dotsync contributers][9]
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
@@ -231,4 +203,5 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 [6]: https://github.com/dotphiles/dotsync/blob/master/templates/dotsyncrc
 [7]: https://github.com/dotphiles/dotsync/blob/master/templates/gitignore
 [8]: https://github.com/dotphiles/dotsync/blob/master/templates/rsyncignore
+[9]: https://github.com/dotphiles/dotsync/graphs/contributors
 
