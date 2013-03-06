@@ -86,6 +86,8 @@ function checkdirs()
 function getfiles()
 {
   SRCFILES=`sed -n '/\[files\]/,/\[endfiles\]/p' $CONFIG | grep -v '^\[.*files]'|grep -v ^#`
+  SRCFILES="$SRCFILES `sed -n '/\[hosts\]/,/\[endhosts\]/p' $CONFIG | grep ^$HOSTNAME | \
+      awk '{print $3}'| awk -F"=" '{print $NF}' | tr "," "\n"`"
   if [[ -z "$SRCFILES" ]]; then
     echo "*** No dotfiles found in $CONFIG, add some ***"
     exit 1
@@ -231,7 +233,7 @@ function gethosts()
   type=$1
   if [[ "$type" == "masters" ]];then
     HOSTS=`sed -n '/\[hosts\]/,/\[endhosts\]/p' $CONFIG | grep -v '^\[.*hosts'| grep -v '^#' |  \
-      awk -F"=" '{print $NF}'|uniq | awk '{print $1}'|egrep -v '(ANY|NONE)' |grep -v $HOSTNAME`
+      awk '{print $2}'| awk -F"=" '{print $NF}'|uniq | awk '{print $1}'|egrep -v '(ANY|NONE)' |grep -v $HOSTNAME`
 
   else
     HOSTS=`sed -n '/\[hosts\]/,/\[endhosts\]/p' $CONFIG |grep -v '^\[.*hosts'| \
