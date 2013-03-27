@@ -61,7 +61,7 @@ function getconfig()
       CONFIG="$HOME/$DOTFILES/dotsyncrc"
     elif [[ -s $HOME/$DOTFILES/.dotsyncrc ]]; then
       CONFIG="$HOME/$DOTFILES/.dotsyncrc"
-    else 
+    else
       echo "*** $CONFIG doesnt exist, exiting ***"
       exit 1
     fi
@@ -283,7 +283,7 @@ function gitpull()
   echo "*** Pulling latest changes from $ORIGIN ***"
   git pull $GITOPT
   if [[ "$1" == "all" ]]; then
-    initlocal 
+    initlocal
     cd $HOME/$DOTFILES
     echo "*** Pulling latest changes for submodules ***"
     git submodule $GITSUBOPT update --init
@@ -476,7 +476,7 @@ function options()
 function init()
 {
   if [[ -z $SERVER ]]; then
-    initlocal 
+    initlocal
   else
     if [[ $RSYNC == True ]]; then
       rsyncremote $SERVER init
