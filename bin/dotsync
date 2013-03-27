@@ -405,7 +405,7 @@ function listconfig()
 function options()
 {
   (( $# )) || usage
-  while getopts "haAH:rILuUPdK:f:vl" OPTION
+  while getopts "haAH:rILuUPKd:f:vl" OPTION
   do
     case $OPTION in
       h)
