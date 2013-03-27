@@ -26,7 +26,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-DOTSYNC_VERSION=0.2.1
+DOTSYNC_VERSION=0.2.0
 
 PROG=`basename $0`
 if [[ -z "$DOTFILES" ]]; then
@@ -61,7 +61,7 @@ function getconfig()
       CONFIG="$HOME/$DOTFILES/dotsyncrc"
     elif [[ -s $HOME/$DOTFILES/.dotsyncrc ]]; then
       CONFIG="$HOME/$DOTFILES/.dotsyncrc"
-    else
+    else 
       echo "*** $CONFIG doesnt exist, exiting ***"
       exit 1
     fi
@@ -195,14 +195,14 @@ function gitremote()
       if [[ "$2" == "pull" ]]; then
         echo "*** Running a git pull of $DOTFILES on $host ***"
         if [[ "$3" == "all" ]]; then
-          DZHOST=$host ssh $host "$REMOTEDSPATH/dotsync -U $DOTSYNCOPT && $REMOTEDSPATH/dotsync -L $DOTSYNCOPT"
+          DZHOST=$host ssh $SSHOPT $host "$REMOTEDSPATH/dotsync -U $DOTSYNCOPT && $REMOTEDSPATH/dotsync -L $DOTSYNCOPT"
         else
-          DZHOST=$host ssh $host "$REMOTEDSPATH/dotsync -u $DOTSYNCOPT && $REMOTEDSPATH/dotsync -L $DOTSYNCOPT"
+          DZHOST=$host ssh $SSHOPT $host "$REMOTEDSPATH/dotsync -u $DOTSYNCOPT && $REMOTEDSPATH/dotsync -L $DOTSYNCOPT"
         fi
         echo
       elif [[ "$2" == "init" ]]; then
         echo "*** Initialising $host with $DOTFILES from $ORIGIN ***"
-        DZHOST=$host ssh -t $host "if [[ -e $DOTFILES ]]; then mv $DOTFILES $BACKUPDIR.old; fi; if [ -L .ssh ]; then rm .ssh; fi; \
+        DZHOST=$host ssh $SSHOPT -t $host "if [[ -e $DOTFILES ]]; then mv $DOTFILES $BACKUPDIR.old; fi; if [ -L .ssh ]; then rm .ssh; fi; \
           git clone --recursive $ORIGIN \$HOME/$DOTFILES && $REMOTEDSPATH/dotsync -d $DOTFILES -I $DOTSYNCOPT && $REMOTEDSPATH/dotsync -d $DOTFILES -L $DOTSYNCOPT"
       fi
     else
@@ -261,8 +261,8 @@ function rsyncremote()
     if [[ "$2" == "init" || "$2" == "push" ]]; then
       if `ping -c1 $host > /dev/null`; then
         echo "*** Syncing $host with $DOTFILES using rsync ***"
-        rsync -azRp $RSYNCOPT --delete --delete-excluded --exclude-from=.rsyncignore . $host:$DOTFILES/
-        DZHOST=$host ssh $host "$REMOTEDSPATH/dotsync -L $DOTSYNCOPT && \
+        rsync -e "ssh $SSHOPT" -azRp $RSYNCOPT --delete --delete-excluded --exclude-from=.rsyncignore . $host:$DOTFILES/
+        DZHOST=$host ssh $SSHOPT $host "$REMOTEDSPATH/dotsync -L $DOTSYNCOPT && \
           if [[ -d $DOTFILES/.git ]]; then rm -rf $DOTFILES/.git/; fi && \
             echo "$host from $HOSTNAME" > $DOTFILES/.rsync"
         echo
@@ -283,7 +283,7 @@ function gitpull()
   echo "*** Pulling latest changes from $ORIGIN ***"
   git pull $GITOPT
   if [[ "$1" == "all" ]]; then
-    initlocal
+    initlocal 
     cd $HOME/$DOTFILES
     echo "*** Pulling latest changes for submodules ***"
     git submodule $GITSUBOPT update --init
@@ -329,7 +329,7 @@ function isgitlayout()
 usage()
 {
   cat << EOF
-  usage: $PROG -I|L|u|U|P|A [-H host|ALL] [-r] [-d dotfiles] [-f conf] [-v]
+  usage: $PROG -I|L|u|U|P|A [-H host|ALL] [-r] [-K] [-d dotfiles] [-f conf] [-v]
 
   WARNING: This could stop you being able to login to remote hosts!
 
@@ -344,6 +344,7 @@ usage()
   -a          - Updates dotfiles on all known machines
   -A          - Updates dotfiles and submodules on all known machines
   -r          - Use rsync instead of git
+  -K          - Automatically add unknown hosts to known_hosts rather than ask
   -f conf     - Config file, defaults to '~/.dotsyncrc' or '\$DOTSYNCRC'
   -d dotfiles - Location of dotfiles, defaults to '~/.dotfiles'
   -l          - List configured hosts and dotfiles to symlink
@@ -404,7 +405,7 @@ function listconfig()
 function options()
 {
   (( $# )) || usage
-  while getopts "haAH:rILuUPd:f:vl" OPTION
+  while getopts "haAH:rILuUPd:f:vl:K" OPTION
   do
     case $OPTION in
       h)
@@ -418,6 +419,9 @@ function options()
           usage
           exit 1
         fi
+        ;;
+      K)
+        SSHOPT='-o StrictHostKeyChecking=no'
         ;;
       r)
         RSYNC=True
@@ -472,7 +476,7 @@ function options()
 function init()
 {
   if [[ -z $SERVER ]]; then
-    initlocal
+    initlocal 
   else
     if [[ $RSYNC == True ]]; then
       rsyncremote $SERVER init
@@ -517,7 +521,7 @@ function allhosts()
     for host in $HOSTS; do
       echo "*** Running a dotsync $ALLOPT on $host ***"
       echo
-      DZHOST=$host ssh $host "$REMOTEDSPATH/dotsync $ALLOPT $DOTSYNCOPT"
+      DZHOST=$host ssh $SSHOPT $host "$REMOTEDSPATH/dotsync $ALLOPT $DOTSYNCOPT"
     done
   fi
   exit
