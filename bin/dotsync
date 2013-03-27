@@ -329,7 +329,7 @@ function isgitlayout()
 usage()
 {
   cat << EOF
-  usage: $PROG -I|L|u|U|P|A [-H host|ALL] [-r] [-K] [-d dotfiles] [-f conf] [-v]
+  usage: $PROG -I|L|u|U|P|A [-H host|ALL] [-r] [-K] [-d dotfiles] [-f conf] [-v] [-V]
 
   WARNING: This could stop you being able to login to remote hosts!
 
@@ -349,6 +349,7 @@ usage()
   -d dotfiles - Location of dotfiles, defaults to '~/.dotfiles'
   -l          - List configured hosts and dotfiles to symlink
   -v          - Verbose
+  -V          - Version
   -h          - Show help message
 
 EOF
@@ -405,7 +406,7 @@ function listconfig()
 function options()
 {
   (( $# )) || usage
-  while getopts "haAH:rILuUPKd:f:vl" OPTION
+  while getopts "haAH:rILuUPKd:f:vVl" OPTION
   do
     case $OPTION in
       h)
@@ -432,6 +433,9 @@ function options()
         GITSUBOPT=""
         RSYNCOPT="-v"
         DOTSYNCOPT="-v"
+        ;;
+      V)
+        echo "dotsync $DOTSYNC_VERSION"
         ;;
       I)
         ACTION=init
