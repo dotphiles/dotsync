@@ -191,7 +191,7 @@ function gitremote()
     hosts=$1
   fi
   for host in $hosts; do
-    if `ping -c1 $host 2>&1 > /dev/null`; then
+    if `ping -c1 $host &> /dev/null`; then
       if [[ "$2" == "pull" ]]; then
         echo "*** Running a git pull of $DOTFILES on $host ***"
         if [[ "$3" == "all" ]]; then
