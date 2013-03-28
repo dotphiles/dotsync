@@ -39,7 +39,7 @@ larger changes where `develop` might move on whilst you're completing your work.
 #### Configuring Git Flow
 
 There is a set of [helper scripts][9] that will work on both Unix-based
-operating systems and Windows.  Follow the appropriate 
+operating systems and Windows.  Follow the appropriate
 [installation instructions][10] for your operating system, and configure your
 working copy repository for use with Git Flow by typing `git flow init`.
 Accept all the default options to the questions that it asks you.
