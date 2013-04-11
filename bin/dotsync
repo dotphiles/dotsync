@@ -235,7 +235,7 @@ function validhost()
     echo "*** Checking if $chkhost is valid ***"
   fi
   VALID=`sed -n '/\[hosts\]/,/\[endhosts\]/p' $CONFIG |grep -v '^\[.*hosts'| \
-    grep -v '^#' | awk '{print $1}'| grep ^$chkhost`
+    grep -v '^#' | awk '{print $1}'|awk -F. '{print $1}'| grep ^$chkhost`
   if [[ "$VALID" == "" ]]; then
     echo "*** Cant find $chkhost in $CONFIG ***"
     exit 1
