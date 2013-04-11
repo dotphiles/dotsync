@@ -87,7 +87,13 @@ function checkdirs()
 function getfiles()
 {
   SRCFILES=`sed -n '/\[files\]/,/\[endfiles\]/p' $CONFIG | grep -v '^\[.*files]'|grep -v ^#`
-  SRCFILES="$SRCFILES `sed -n '/\[hosts\]/,/\[endhosts\]/p' $CONFIG | grep ^$HOSTNAME | \
+  chkhost=$HOSTNAME
+  shrthost=`echo $chkhost | awk -F. '{print $1}'`
+  chk="^($shrthost|$chkhost)"
+  if [[ "$DSHOST" ]]; then
+    chk="^($DSHOST|$shrthost|$chkhost)"
+  fi
+  SRCFILES="$SRCFILES `sed -n '/\[hosts\]/,/\[endhosts\]/p' $CONFIG | egrep "$chk" | \
       awk '{print $3}'| awk -F"=" '{print $NF}' | tr "," "\n"`"
   if [[ -z "$SRCFILES" ]]; then
     echo "*** No dotfiles found in $CONFIG, add some ***"
@@ -217,11 +223,16 @@ function validhosttype()
 {
   chktype=$1
   chkhost=$2
+  shrthost=`echo $chkhost | awk -F. '{print $1}'`
+  chk="^($shrthost|$chkhost)"
+  if [[ "$DSHOST" ]]; then
+    chk="^($DSHOST|$shrthost|$chkhost)"
+  fi
   if [[ "$VERBOSE" == True ]]; then
     echo "*** Checking if $chkhost is valid for $chktype from $HOSTNAME ***"
   fi
   VALID=`sed -n '/\[hosts\]/,/\[endhosts\]/p' $CONFIG |grep -v '^\[.*hosts'| \
-    egrep "($chktype=ANY|$chktype=$HOSTNAME)" | grep -v '^#' | awk '{print $1}'| grep ^$chkhost`
+    egrep "($chktype=ANY|$chktype=$HOSTNAME)" | grep -v '^#' | awk '{print $1}'| egrep "$chk"`
   if [[ "$VALID" == "" ]]; then
     echo "*** Cant find $chkhost in $CONFIG for $chktype from $HOSTNAME ***"
     exit 1
@@ -232,11 +243,15 @@ function validhost()
 {
   chkhost=$1
   shrthost=`echo $chkhost | awk -F. '{print $1}'`
+  chk="^($shrthost|$chkhost)"
+  if [[ "$DSHOST" ]]; then
+    chk="^($DSHOST|$shrthost|$chkhost)"
+  fi
   if [[ "$VERBOSE" == True ]]; then
     echo "*** Checking if $chkhost is valid ***"
   fi
   VALID=`sed -n '/\[hosts\]/,/\[endhosts\]/p' $CONFIG |grep -v '^\[.*hosts'| \
-    grep -v '^#' | awk '{print $1}'|awk -F. '{print $1}'| grep ^$DSHOST | grep ^$shrthost | grep ^$chkhost`
+    grep -v '^#' | awk '{print $1}'| egrep "$chk"`
   if [[ "$VALID" == "" ]]; then
     echo -n "*** Cant find $chkhost in $CONFIG as"
     if [[ "$shrthost" != "$chkhost" ]]; then
@@ -253,13 +268,17 @@ function validhost()
 function gethosts()
 {
   type=$1
+  shrthost=`echo $HOSTNAME | awk -F. '{print $1}'`
+  chk="($shrthost|$HOSTNAME)"
+  if [[ "$DSHOST" ]]; then
+    chk="($DSHOST|$shrthost|$HOSTNAME)"
+  fi
   if [[ "$type" == "masters" ]];then
     HOSTS=`sed -n '/\[hosts\]/,/\[endhosts\]/p' $CONFIG | grep -v '^\[.*hosts'| grep -v '^#' |  \
-      awk '{print $2}'| awk -F"=" '{print $NF}'|uniq | awk '{print $1}'|egrep -v '(ANY|NONE)' |grep -v $HOSTNAME`
-
+      awk '{print $2}'| awk -F"=" '{print $NF}'| awk '{print $1}' |egrep -v '(ANY|NONE)' | uniq -u`
   else
     HOSTS=`sed -n '/\[hosts\]/,/\[endhosts\]/p' $CONFIG |grep -v '^\[.*hosts'| \
-      egrep "($type=ANY|$type=$HOSTNAME)" | grep -v '^#' | awk '{print $1}' |grep -v $HOSTNAME`
+      egrep "($type=ANY|$type=$chk)" | grep -v '^#' | awk '{print $1}' |grep -v $HOSTNAME`
   fi
   if [[ "$VERBOSE" == True ]]; then
     echo "*** Getting a list of hosts for $type ***"
