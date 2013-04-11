@@ -344,8 +344,6 @@ function isgitlayout()
 usage()
 {
   cat << EOF
-  usage: $PROG -L|-l|-a|-A|-V|-h [-d dotfiles] [-f conf] [-v]
-  usage: $PROG [-H host|ALL] -I|-u|-U [-r] [-K] [-d dotfiles] [-f conf] [-v]
 
   WARNING: This could stop you being able to login to remote hosts!
 
