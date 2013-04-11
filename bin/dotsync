@@ -42,6 +42,7 @@ DOTSYNCOPT=""
 UPDATEOPT=""
 ALLOPT=""
 REMOTEDSPATH="$DOTFILES/dotsync/bin"
+REMOTEBACKUPDIR="\$HOME/.backup/`echo $DOTFILES |sed s/^\.//g`"
 
 function checknotroot()
 {
@@ -202,7 +203,7 @@ function gitremote()
         echo
       elif [[ "$2" == "init" ]]; then
         echo "*** Initialising $host with $DOTFILES from $ORIGIN ***"
-        DZHOST=$host ssh $SSHOPT -t $host "if [[ -e $DOTFILES ]]; then mv $DOTFILES $BACKUPDIR.old; fi; if [ -L .ssh ]; then rm .ssh; fi; \
+        DZHOST=$host ssh $SSHOPT -t $host "if [[ -e $DOTFILES ]]; then mkdir -p $REMOTEBACKUPDIR; mv $DOTFILES $REMOTEBACKUPDIR.old; fi; if [ -L .ssh ]; then rm .ssh; fi; \
           git clone --recursive $ORIGIN \$HOME/$DOTFILES && $REMOTEDSPATH/dotsync -d $DOTFILES -I $DOTSYNCOPT && $REMOTEDSPATH/dotsync -d $DOTFILES -L $DOTSYNCOPT"
       fi
     else
