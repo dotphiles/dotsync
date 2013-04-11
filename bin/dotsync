@@ -327,8 +327,10 @@ function gitpull()
     initlocal
     cd $HOME/$DOTFILES
     echo "*** Pulling latest changes for submodules ***"
-    git submodule $GITSUBOPT update --init
+    git submodule $GITSUBOPT init
     git submodule $GITSUBOPT foreach --recursive git pull $GITOPT origin master
+    git submodule $GITSUBOPT update
+    git submodule $GITSUBOPT foreach git submodule update
   fi
   cd
 }
