@@ -108,8 +108,8 @@ function getrealdotfile()
     REALFILE="$HOME/$DOTFILES/$SRCFILE.d/localhost"
   elif [[ -f "$HOME/$DOTFILES/$SRCFILE.d/$HOSTNAME" ]]; then
     REALFILE="$HOME/$DOTFILES/$SRCFILE.d/$HOSTNAME"
-  elif [[ -f "$HOME/$DOTFILES/$SRCFILE.d/$DZHOST" ]]; then
-    REALFILE="$HOME/$DOTFILES/$SRCFILE.d/$DZHOST"
+  elif [[ -f "$HOME/$DOTFILES/$SRCFILE.d/$DSHOST" ]]; then
+    REALFILE="$HOME/$DOTFILES/$SRCFILE.d/$DSHOST"
   elif [[ -f "$HOME/$DOTFILES/$SRCFILE.d/$DOMAIN" ]]; then
     REALFILE="$HOME/$DOTFILES/$SRCFILE.d/$DOMAIN"
   else
@@ -188,7 +188,7 @@ function gitremote()
     gethosts git
     hosts=$HOSTS
   else
-    validhost git $1
+    validhosttype git $1
     hosts=$1
   fi
   for host in $hosts; do
@@ -196,14 +196,14 @@ function gitremote()
       if [[ "$2" == "pull" ]]; then
         echo "*** Running a git pull of $DOTFILES on $host ***"
         if [[ "$3" == "all" ]]; then
-          DZHOST=$host ssh $SSHOPT $host "$REMOTEDSPATH/dotsync -U $DOTSYNCOPT && $REMOTEDSPATH/dotsync -L $DOTSYNCOPT"
+          DSHOST=$host ssh $SSHOPT $host "$REMOTEDSPATH/dotsync -U $DOTSYNCOPT && $REMOTEDSPATH/dotsync -L $DOTSYNCOPT"
         else
-          DZHOST=$host ssh $SSHOPT $host "$REMOTEDSPATH/dotsync -u $DOTSYNCOPT && $REMOTEDSPATH/dotsync -L $DOTSYNCOPT"
+          DSHOST=$host ssh $SSHOPT $host "$REMOTEDSPATH/dotsync -u $DOTSYNCOPT && $REMOTEDSPATH/dotsync -L $DOTSYNCOPT"
         fi
         echo
       elif [[ "$2" == "init" ]]; then
         echo "*** Initialising $host with $DOTFILES from $ORIGIN ***"
-        DZHOST=$host ssh $SSHOPT -t $host "if [[ -e $DOTFILES ]]; then mkdir -p $REMOTEBACKUPDIR; mv $DOTFILES $REMOTEBACKUPDIR.old; fi; if [ -L .ssh ]; then rm .ssh; fi; \
+        DSHOST=$host ssh $SSHOPT -t $host "if [[ -e $DOTFILES ]]; then mkdir -p $REMOTEBACKUPDIR; mv $DOTFILES $REMOTEBACKUPDIR.old; fi; if [ -L .ssh ]; then rm .ssh; fi; \
           git clone --recursive $ORIGIN \$HOME/$DOTFILES && $REMOTEDSPATH/dotsync -d $DOTFILES -I $DOTSYNCOPT && $REMOTEDSPATH/dotsync -d $DOTFILES -L $DOTSYNCOPT"
       fi
     else
@@ -213,7 +213,7 @@ function gitremote()
   done
 }
 
-function validhost()
+function validhosttype()
 {
   chktype=$1
   chkhost=$2
@@ -224,6 +224,20 @@ function validhost()
     egrep "($chktype=ANY|$chktype=$HOSTNAME)" | grep -v '^#' | awk '{print $1}'| grep ^$chkhost`
   if [[ "$VALID" == "" ]]; then
     echo "*** Cant find $chkhost in $CONFIG for $chktype from $HOSTNAME ***"
+    exit 1
+  fi
+}
+
+function validhost()
+{
+  chkhost=$1
+  if [[ "$VERBOSE" == True ]]; then
+    echo "*** Checking if $chkhost is valid ***"
+  fi
+  VALID=`sed -n '/\[hosts\]/,/\[endhosts\]/p' $CONFIG |grep -v '^\[.*hosts'| \
+    grep -v '^#' | awk '{print $1}'| grep ^$chkhost`
+  if [[ "$VALID" == "" ]]; then
+    echo "*** Cant find $chkhost in $CONFIG ***"
     exit 1
   fi
 }
@@ -254,7 +268,7 @@ function rsyncremote()
     gethosts rsync
     hosts=$HOSTS
   else
-    validhost rsync $1
+    validhosttype rsync $1
     hosts=$1
   fi
   cd $HOME/$DOTFILES
@@ -263,7 +277,7 @@ function rsyncremote()
       if `ssh $SSHOPT $host date > /dev/null 2>&1`; then
         echo "*** Syncing $host with $DOTFILES using rsync ***"
         rsync -e "ssh $SSHOPT" -azRp $RSYNCOPT --delete --delete-excluded --exclude-from=.rsyncignore . $host:$DOTFILES/
-        DZHOST=$host ssh $SSHOPT $host "$REMOTEDSPATH/dotsync -L $DOTSYNCOPT && \
+        DSHOST=$host ssh $SSHOPT $host "$REMOTEDSPATH/dotsync -L $DOTSYNCOPT && \
           if [[ -d $DOTFILES/.git ]]; then rm -rf $DOTFILES/.git/; fi && \
             echo "$host from $HOSTNAME" > $DOTFILES/.rsync"
         echo
@@ -330,25 +344,35 @@ function isgitlayout()
 usage()
 {
   cat << EOF
-  usage: $PROG -I|L|u|U|P|A [-H host|ALL] [-r] [-K] [-d dotfiles] [-f conf] [-v] [-V]
+  usage: $PROG -L|-l|-a|-A|-V|-h [-d dotfiles] [-f conf] [-v]
+  usage: $PROG [-H host|ALL] -I|-u|-U [-r] [-K] [-d dotfiles] [-f conf] [-v]
 
   WARNING: This could stop you being able to login to remote hosts!
 
-  options:
+  Actions:
 
+  -l          - List configured hosts and dotfiles to symlink
   -I          - Initialise a machine using dotsync
   -L          - Symlink available dotfiles into \$HOME
   -u          - Update to the latest copy of dotfiles
   -U          - Update to the latest copy of dotfiles inc submodules (git only)
   -P          - Push any local changes back to the repo (git only)
-  -H host     - Perform action against host listed in config, can be 'ALL'
+
+    Remote Hosts:
+
+    -H host     - Perform action against host listed in config, can be 'ALL'
+      -r          - Use rsync instead of git
+      -K          - Automatically add unknown hosts to known_hosts rather than ask
+
+  Update everything:
+
   -a          - Updates dotfiles on all known machines
   -A          - Updates dotfiles and submodules on all known machines
-  -r          - Use rsync instead of git
-  -K          - Automatically add unknown hosts to known_hosts rather than ask
+
+  Extras:
+
   -f conf     - Config file, defaults to '~/.dotsyncrc' or '\$DOTSYNCRC'
   -d dotfiles - Location of dotfiles, defaults to '~/.dotfiles'
-  -l          - List configured hosts and dotfiles to symlink
   -v          - Verbose
   -V          - Version
   -h          - Show help message
@@ -407,7 +431,7 @@ function listconfig()
 function options()
 {
   (( $# )) || usage
-  while getopts "haAH:rILuUPKd:f:vVl" OPTION
+  while getopts "haiAH:rILuUPKd:f:vVl" OPTION
   do
     case $OPTION in
       h)
@@ -426,7 +450,7 @@ function options()
         SSHOPT='-o StrictHostKeyChecking=no'
         ;;
       r)
-        RSYNC=True
+       RSYNC=True
         ;;
       v)
         VERBOSE=True
@@ -437,6 +461,7 @@ function options()
         ;;
       V)
         echo "dotsync $DOTSYNC_VERSION"
+        exit
         ;;
       I)
         ACTION=init
@@ -470,12 +495,13 @@ function options()
       f)
         CONFIG=$OPTARG
         ;;
-      *)
+      ?)
         usage
         exit
         ;;
     esac
   done
+
 }
 
 function init()
@@ -495,6 +521,7 @@ function init()
 function update()
 {
   if [[ -z $SERVER ]]; then
+    validhost $HOSTNAME
     gitpull $UPDATEOPT
   else
     if [[ $RSYNC == True ]]; then
@@ -526,7 +553,7 @@ function allhosts()
     for host in $HOSTS; do
       echo "*** Running a dotsync $ALLOPT on $host ***"
       echo
-      DZHOST=$host ssh $SSHOPT $host "$REMOTEDSPATH/dotsync $ALLOPT $DOTSYNCOPT"
+      DSHOST=$host ssh $SSHOPT $host "$REMOTEDSPATH/dotsync $ALLOPT $DOTSYNCOPT"
     done
   fi
   exit
@@ -537,13 +564,16 @@ function doaction()
   # Do stuff
   case $ACTION in
     init)
+      validhost $HOSTNAME
       init
       ;;
     list)
+      validhost $HOSTNAME
       listconfig
       exit
       ;;
     link)
+      validhost $HOSTNAME
       symlink
       exit
       ;;
