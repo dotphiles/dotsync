@@ -231,13 +231,20 @@ function validhosttype()
 function validhost()
 {
   chkhost=$1
+  shrthost=`echo $chkhost | awk -F. '{print $1}'`
   if [[ "$VERBOSE" == True ]]; then
     echo "*** Checking if $chkhost is valid ***"
   fi
   VALID=`sed -n '/\[hosts\]/,/\[endhosts\]/p' $CONFIG |grep -v '^\[.*hosts'| \
-    grep -v '^#' | awk '{print $1}'|awk -F. '{print $1}'| grep ^$chkhost`
+    grep -v '^#' | awk '{print $1}'|awk -F. '{print $1}'| grep ^$DSHOST | grep ^$shrthost | grep ^$chkhost`
   if [[ "$VALID" == "" ]]; then
-    echo "*** Cant find $chkhost in $CONFIG ***"
+    echo -n "*** Cant find $chkhost in $CONFIG as"
+    if [[ "$shrthost" != "$chkhost" ]]; then
+      echo -n " $chkhost, $shrthost"
+    else
+      echo -n " $chkhost"
+    fi   
+    echo " or \$DSHOST ***"
     exit 1
   fi
 }
