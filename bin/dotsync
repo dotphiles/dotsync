@@ -198,7 +198,7 @@ function gitremote()
     hosts=$1
   fi
   for host in $hosts; do
-    if `ssh $SSHOPT $host date > /dev/null 2>&1`; then
+    if `ssh $SSHOPT -o ConnectTimeout=2 $host date > /dev/null 2>&1`; then
       if [[ "$2" == "pull" ]]; then
         echo "*** Running a git pull of $DOTFILES on $host ***"
         if [[ "$3" == "all" ]]; then
@@ -300,7 +300,7 @@ function rsyncremote()
   cd $HOME/$DOTFILES
   for host in $hosts; do
     if [[ "$2" == "init" || "$2" == "push" ]]; then
-      if `ssh $SSHOPT $host date > /dev/null 2>&1`; then
+      if `ssh $SSHOPT -o ConnectTimeout=2 $host date > /dev/null 2>&1`; then
         echo "*** Syncing $host with $DOTFILES using rsync ***"
         rsync -e "ssh $SSHOPT" -azRp $RSYNCOPT --delete --delete-excluded --exclude-from=.rsyncignore . $host:$DOTFILES/
         DSHOST=$host ssh $SSHOPT $host "$REMOTEDSPATH/dotsync -L $DOTSYNCOPT && \
