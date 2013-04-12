@@ -326,6 +326,7 @@ function gitpull()
   if [[ "$1" == "all" ]]; then
     cd $HOME/$DOTFILES
     echo "*** Pulling latest changes for submodules ***"
+    git submodule $GITSUBOPT foreach --recursive git fetch
     git submodule $GITSUBOPT foreach --recursive git submodule update
   fi
   cd
