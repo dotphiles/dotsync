@@ -237,6 +237,10 @@ function validhosttype()
     echo "*** Cant find $chkhost in $CONFIG for $chktype from $HOSTNAME ***"
     exit 1
   fi
+  if [[ `echo "$VALID" | grep -c '$'` > 1 ]]; then
+    echo "*** Duplicate entries found for $chkhost in $CONFIG, be more specific! ***"
+    exit 1
+  fi
 }
 
 function validhost()
