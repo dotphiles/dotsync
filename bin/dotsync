@@ -358,8 +358,10 @@ function gitpull()
   if [[ "$1" == "all" ]]; then
     cd $HOME/$DOTFILES
     echo "*** Pulling latest changes for submodules ***"
+    # Required if a submodule origin changed
+    git submodule $GITSUBOPT sync
     git submodule $GITSUBOPT foreach --recursive git fetch
-    git submodule $GITSUBOPT foreach --recursive git submodule update
+    git submodule $GITSUBOPT update --init --recursive
   fi
   cd
 }
