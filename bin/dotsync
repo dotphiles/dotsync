@@ -295,6 +295,31 @@ function gethosts()
   fi
 }
 
+function shellremote()
+{
+  if [[ "$1" == "all" ]]; then
+    gethosts git
+    hosts=$HOSTS
+    if [[ $RSYNC == True ]]; then
+      gethosts rsync
+      hosts="$hosts $HOSTS"
+    fi
+  else
+    validhosttype ANY $1
+    hosts=$1
+  fi
+  for host in $hosts; do
+    if `ssh $SSHOPT -o ConnectTimeout=2 $host date > /dev/null 2>&1`; then
+      echo "*** Running remote command on $host ***"
+      DSHOST=$host ssh $SSHOPT $host "cd \$HOME/$DOTFILES && $REMOTE_COMMAND"
+      echo
+    else
+      echo "*** $host is down, not running remote command ***"
+      echo
+    fi
+  done
+}
+
 function rsyncremote()
 {
   if [[ "$1" == "all" ]]; then
@@ -387,6 +412,8 @@ usage()
   -u          - Update to the latest copy of dotfiles
   -U          - Update to the latest copy of dotfiles inc submodules (git only)
   -P          - Push any local changes back to the repo (git only)
+  -c          - Run an arbitrary shell command on all known machines
+  -g          - Same as -c, but only on git configured machines
 
     Remote Hosts:
 
@@ -461,7 +488,7 @@ function listconfig()
 function options()
 {
   (( $# )) || usage
-  while getopts "haiAH:rILuUPKd:f:vVl" OPTION
+  while getopts "haiAH:rILuUPKd:f:vVlc:g:" OPTION
   do
     case $OPTION in
       h)
@@ -524,6 +551,15 @@ function options()
         ;;
       f)
         CONFIG=$OPTARG
+        ;;
+      c)
+        ACTION=shell
+        RSYNC=True
+        REMOTE_COMMAND=$OPTARG
+        ;;
+      g)
+        ACTION=shell
+        REMOTE_COMMAND=$OPTARG
         ;;
       ?)
         usage
@@ -605,6 +641,13 @@ function doaction()
     link)
       validhost $HOSTNAME
       symlink
+      exit
+      ;;
+    shell)
+      if [ -z "$SERVER" ]; then
+        SERVER=all
+      fi
+      shellremote $SERVER
       exit
       ;;
     pull)
