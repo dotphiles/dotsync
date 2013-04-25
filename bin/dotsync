@@ -223,6 +223,9 @@ function validhosttype()
 {
   chktype=$1
   chkhost=$2
+  if [ $chktype == ANY ]; then
+    chktype=""
+  fi
   shrthost=`echo $chkhost | awk -F. '{print $1}'`
   chk="^($shrthost|$chkhost)"
   if [[ "$DSHOST" ]]; then
