@@ -62,6 +62,8 @@ Usage
     -f conf     - Config file, defaults to '~/.dotsyncrc' or '$DOTSYNCRC'
     -d dotfiles - Location of dotfiles, defaults to '~/.dotfiles'
     -l          - List configured hosts and dotfiles to symlink
+    -c          - Run an arbitrary shell command on all known machines
+    -g          - Same as -c, but only on git configured machines
     -v          - Verbose
     -h          - Show help message
 
