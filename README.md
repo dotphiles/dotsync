@@ -62,6 +62,8 @@ Usage
     -f conf     - Config file, defaults to '~/.dotsyncrc' or '$DOTSYNCRC'
     -d dotfiles - Location of dotfiles, defaults to '~/.dotfiles'
     -l          - List configured hosts and dotfiles to symlink
+    -c          - Run an arbitrary shell command on all known machines
+    -g          - Same as -c, but only on git configured machines
     -v          - Verbose
     -h          - Show help message
 
@@ -113,6 +115,23 @@ dotsync will look for
 And link the first one it finds instead of the standard dotfile.  The `localhost`
 dotfile should be excuded from your repo.
 
+Machine specific Dotfiles
+-------------------------
+
+Sometimes you have a dotfile thats only for one machine and not symlinked on any
+others.
+
+If you add the following to dotsyncrc
+
+[hosts]
+hostname.example.com        git=ANY             file=dotfile1/dotfile1,dotfile2:.linkto
+[endhosts]
+
+dotsync will link the following on `hostname` only
+
+    ~/$DOTFILES/dotfile1/dotfile1 to ~/.dotfile1
+    ~/$DOTFILES/dotfile1 to ~/.linkto
+
 Remote Machines
 ---------------
 
@@ -135,7 +154,7 @@ e.g.
 and the following dotsyncrc
 
     [hosts]
-    laptop                       git=ANY
+    laptop                       git=NONE
     desktop                      git=laptop
     mac-mini                     rsync=laptop
     workdesktop                  git=laptop
