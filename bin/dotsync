@@ -26,7 +26,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-DOTSYNC_VERSION=0.2.3
+DOTSYNC_VERSION=0.2.4
 
 PROG=`basename $0`
 if [[ -z "$DOTFILES" ]]; then
@@ -43,6 +43,9 @@ UPDATEOPT=""
 ALLOPT=""
 REMOTEDSPATH="$DOTFILES/dotsync/bin"
 REMOTEBACKUPDIR="\$HOME/.backup/`echo $DOTFILES |sed s/^\.//g`"
+
+# Exit immediately on SIGINT
+trap exit SIGINT
 
 function checknotroot()
 {
@@ -358,8 +361,10 @@ function gitpull()
   if [[ "$1" == "all" ]]; then
     cd $HOME/$DOTFILES
     echo "*** Pulling latest changes for submodules ***"
+    # Required if a submodule origin changed
+    git submodule $GITSUBOPT sync
     git submodule $GITSUBOPT foreach --recursive git fetch
-    git submodule $GITSUBOPT foreach --recursive git submodule update
+    git submodule $GITSUBOPT update --init --recursive
   fi
   cd
 }
