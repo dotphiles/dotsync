@@ -44,6 +44,9 @@ ALLOPT=""
 REMOTEDSPATH="$DOTFILES/dotsync/bin"
 REMOTEBACKUPDIR="\$HOME/.backup/`echo $DOTFILES |sed s/^\.//g`"
 
+# Exit immediately on SIGINT
+trap exit SIGINT
+
 function checknotroot()
 {
   if [[ $USER == "root" ]]; then
