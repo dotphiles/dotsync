@@ -268,7 +268,7 @@ function validhost()
       echo -n " $chkhost, $shrthost"
     else
       echo -n " $chkhost"
-    fi   
+    fi
     echo " or \$DSHOST ***"
     exit 1
   fi
