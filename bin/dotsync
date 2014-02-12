@@ -228,9 +228,9 @@ validhosttype()
     chktype=""
   fi
   shrthost=$(echo "$chkhost" | awk -F. '{print $1}')
-  chk="^($shrthost|$chkhost)"
+  chk="^($shrthost|$chkhost)$"
   if [[ "$DSHOST" ]]; then
-    chk="^($DSHOST|$shrthost|$chkhost)"
+    chk="^($DSHOST|$shrthost|$chkhost)$"
   fi
   if [[ "$VERBOSE" == True ]]; then
     echo "*** Checking if $chkhost is valid for $chktype from $HOSTNAME ***"
@@ -251,9 +251,9 @@ validhost()
 {
   chkhost=$1
   shrthost=$(echo "$chkhost" | awk -F. '{print $1}')
-  chk="^($shrthost|$chkhost)"
+  chk="^($shrthost|$chkhost)$"
   if [[ "$DSHOST" ]]; then
-    chk="^($DSHOST|$shrthost|$chkhost)"
+    chk="^($DSHOST|$shrthost|$chkhost)$"
   fi
   if [[ "$VERBOSE" == True ]]; then
     echo "*** Checking if $chkhost is valid ***"
