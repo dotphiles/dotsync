@@ -90,9 +90,9 @@ getfiles()
   SRCFILES=$(sed -n '/\[files\]/,/\[endfiles\]/p' $CONFIG | grep -v '^\[.*files]'|grep -v ^#)
   chkhost=$HOSTNAME
   shrthost=$(echo $chkhost | awk -F. '{print $1}')
-  chk="^($shrthost|$chkhost)$"
+  chk="^($shrthost|$chkhost)"
   if [[ "$DSHOST" ]]; then
-    chk="^($DSHOST|$shrthost|$chkhost)$"
+    chk="^($DSHOST|$shrthost|$chkhost)"
   fi
   SRCFILES="$SRCFILES $(sed -n '/\[hosts\]/,/\[endhosts\]/p' $CONFIG | egrep "$chk" | \
     awk '{print $3}'| awk -F"=" '{print $NF}' | tr "," "\n")"
