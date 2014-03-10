@@ -335,7 +335,7 @@ rsyncremote()
     if [[ "$2" == "init" || "$2" == "push" ]]; then
       if ssh $SSHOPT -o ConnectTimeout=2 "$host" date > /dev/null 2>&1; then
         echo "*** Syncing $host with $DOTFILES using rsync ***"
-        rsync -e "ssh $SSHOPT" -azRp $RSYNCOPT --delete --delete-excluded --exclude-from=.rsyncignore . "$host":"$DOTFILES"/
+        rsync -e "ssh $SSHOPT" -azRp $RSYNCOPT --delete --delete-excluded --exclude-from=.rsyncignore --filter='P known_hosts' . "$host":"$DOTFILES"/
         DSHOST=$host ssh $SSHOPT "$host" "$REMOTEDSPATH/dotsync -L $DOTSYNCOPT && \
           if [[ -d $DOTFILES/.git ]]; then rm -rf $DOTFILES/.git/; fi && \
             echo ""$host" from $HOSTNAME" > $DOTFILES/.rsync"
