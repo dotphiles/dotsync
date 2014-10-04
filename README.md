@@ -123,9 +123,9 @@ others.
 
 If you add the following to dotsyncrc
 
-[hosts]
-hostname.example.com        git=ANY             file=dotfile1/dotfile1,dotfile2:.linkto
-[endhosts]
+    [hosts]
+    hostname.example.com        git=ANY             file=dotfile1/dotfile1,dotfile2:.linkto
+    [endhosts]
 
 dotsync will link the following on `hostname` only
 
