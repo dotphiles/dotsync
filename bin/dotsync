@@ -111,13 +111,13 @@ getrealdotfile()
     DSTFILE=".$(basename "$SRCFILE")"
   fi
 
-  if [[ -f "$HOME/$DOTFILES/$SRCFILE.d/localhost" ]]; then
+  if [[ -e "$HOME/$DOTFILES/$SRCFILE.d/localhost" ]]; then
     REALFILE="$HOME/$DOTFILES/$SRCFILE.d/localhost"
-  elif [[ -f "$HOME/$DOTFILES/$SRCFILE.d/$HOSTNAME" ]]; then
+  elif [[ -e "$HOME/$DOTFILES/$SRCFILE.d/$HOSTNAME" ]]; then
     REALFILE="$HOME/$DOTFILES/$SRCFILE.d/$HOSTNAME"
-  elif [[ -f "$HOME/$DOTFILES/$SRCFILE.d/$DSHOST" ]]; then
+  elif [[ -e "$HOME/$DOTFILES/$SRCFILE.d/$DSHOST" ]]; then
     REALFILE="$HOME/$DOTFILES/$SRCFILE.d/$DSHOST"
-  elif [[ -f "$HOME/$DOTFILES/$SRCFILE.d/$DOMAIN" ]]; then
+  elif [[ -e "$HOME/$DOTFILES/$SRCFILE.d/$DOMAIN" ]]; then
     REALFILE="$HOME/$DOTFILES/$SRCFILE.d/$DOMAIN"
   else
     REALFILE="$HOME/$DOTFILES/$SRCFILE"
