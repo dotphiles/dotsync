@@ -668,8 +668,8 @@ doaction()
 
 # MAIN
 checknotroot
+options "${@}"
 getconfig
 checkdirs
-options "${@}"
 doaction
 
