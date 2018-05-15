@@ -124,6 +124,7 @@ getrealdotfile()
   fi
 
   DOTFILE="$HOME/$DSTFILE"
+  DOTFILE_DIR=$(dirname "${DOTFILE}")
 }
 
 initlocal()
@@ -169,6 +170,7 @@ symlink()
       rm -f "$DOTFILE"
       ln -s "$REALFILE" "$DOTFILE"
     else
+      mkdir -p "$DOTFILE_DIR"
       ln -s "$REALFILE" "$DOTFILE"
     fi
 
