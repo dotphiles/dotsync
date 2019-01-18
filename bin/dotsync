@@ -153,6 +153,7 @@ symlink()
     getrealdotfile "$file"
 
     if [[ -e "$DOTFILE" ]] && [[ ! -h "$DOTFILE" ]]; then
+      # If file exists and it is not a link
       BACKUP="$BACKUPDIR/$(basename "$file")"
       echo "*** $DOTFILE already exists, backing up in $BACKUP ***"
       cp -r "$DOTFILE" "$BACKUP"
@@ -165,10 +166,14 @@ symlink()
           cp "$BACKUPDIR.old/ssh/known_hosts" "$DOTFILE/"
         fi
       fi
-    elif [[ -e "$DOTFILE" ]]; then
+    elif [[ -e "$DOTFILE" ]] || [[ -h "$DOTFILE" ]] ; then
+      # If file exists and it is a link
+      # NOTE: The second condition is required because otherwise broken links
+      #       are not detected by [[ -e ... ]] condition
       rm -f "$DOTFILE"
       ln -s "$REALFILE" "$DOTFILE"
     else
+      # The file does not exist
       ln -s "$REALFILE" "$DOTFILE"
     fi
 
