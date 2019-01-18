@@ -22,7 +22,7 @@ If you already have your dotfiles in a git repo...
 
     cd ~/.dotfiles
     git submodule add git@github.com:dotphiles/dotsync.git
-    git submodule --init update
+    git submodule update --init
 
 If you dont...
 
