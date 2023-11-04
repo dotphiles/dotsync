@@ -94,7 +94,7 @@ getfiles()
   if [[ "$DSHOST" ]]; then
     chk="^($DSHOST|$shrthost|$chkhost)"
   fi
-  SRCFILES="$SRCFILES $(sed -n '/\[hosts\]/,/\[endhosts\]/p' $CONFIG | egrep "$chk" | \
+  SRCFILES="$SRCFILES $(sed -n '/\[hosts\]/,/\[endhosts\]/p' $CONFIG | grep -E "$chk" | \
     awk '{print $3}'| awk -F"=" '{print $NF}' | tr "," "\n")"
   if [[ -z "$SRCFILES" ]]; then
     echo "*** No dotfiles found in $CONFIG, add some ***"
@@ -238,7 +238,7 @@ validhosttype()
     echo "*** Checking if $chkhost is valid for $chktype from $HOSTNAME ***"
   fi
   VALID=$(sed -n '/\[hosts\]/,/\[endhosts\]/p' $CONFIG |grep -v '^\[.*hosts'| \
-    egrep "($chktype=ANY|$chktype=$HOSTNAME)" | grep -v '^#' | awk '{print $1}'| egrep "$chk")
+    grep -E "($chktype=ANY|$chktype=$HOSTNAME)" | grep -v '^#' | awk '{print $1}'| grep -E "$chk")
   if [[ "$VALID" == "" ]]; then
     echo "*** Cant find $chkhost in $CONFIG for $chktype from $HOSTNAME ***"
     exit 1
@@ -261,7 +261,7 @@ validhost()
     echo "*** Checking if $chkhost is valid ***"
   fi
   VALID=$(sed -n '/\[hosts\]/,/\[endhosts\]/p' $CONFIG |grep -v '^\[.*hosts'| \
-    grep -v '^#' | awk '{print $1}'| egrep "$chk")
+    grep -v '^#' | awk '{print $1}'| grep -E "$chk")
   if [[ "$VALID" == "" ]]; then
     echo -n "*** Cant find $chkhost in $CONFIG as"
     if [[ "$shrthost" != "$chkhost" ]]; then
@@ -285,10 +285,10 @@ gethosts()
   fi
   if [[ "$type" == "masters" ]];then
     HOSTS=$(sed -n '/\[hosts\]/,/\[endhosts\]/p' $CONFIG | grep -v '^\[.*hosts'| grep -v '^#' |  \
-      awk '{print $2}'| awk -F"=" '{print $NF}'| awk '{print $1}' |egrep -v '(ANY|NONE)' | uniq -u)
+      awk '{print $2}'| awk -F"=" '{print $NF}'| awk '{print $1}' |grep -Ev '(ANY|NONE)' | uniq -u)
   else
     HOSTS=$(sed -n '/\[hosts\]/,/\[endhosts\]/p' $CONFIG |grep -v '^\[.*hosts'| \
-      egrep "($type=ANY|$type=$chk)" | grep -v '^#' | awk '{print $1}' |grep -v $HOSTNAME)
+      grep -E "($type=ANY|$type=$chk)" | grep -v '^#' | awk '{print $1}' |grep -v "$HOSTNAME")
   fi
   if [[ "$VERBOSE" == True ]]; then
     echo "*** Getting a list of hosts for $type ***"
